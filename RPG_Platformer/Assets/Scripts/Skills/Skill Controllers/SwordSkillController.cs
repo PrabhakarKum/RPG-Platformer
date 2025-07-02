@@ -178,8 +178,8 @@ public class SwordSkillController : MonoBehaviour
 
       if (collision.GetComponent<Enemy>() != null)
       {
-         Enemy enemy = collision.GetComponent<Enemy>();
-         SwordSkillDamage(enemy, collision.GetComponent<Enemy>().transform);
+         var enemy = collision.GetComponent<Enemy>();
+         SwordSkillDamage(enemy, enemy.transform);
       }
       
       SetupTargetsForBounce(collision);
@@ -187,9 +187,9 @@ public class SwordSkillController : MonoBehaviour
       StuckInto(collision);
    }
 
-   private void SwordSkillDamage(Enemy enemy, Transform position)
+   private void SwordSkillDamage(Enemy enemy, Transform position, bool isCritical = false)
    {
-      enemy.TakeDamage(1, position, transform);
+      enemy.TakeDamage(10, 0, ElementType.None, position, transform, isCritical);
       enemy.StartCoroutine("FreezeTimerFor", _freezeTimeDuration);
    }
 

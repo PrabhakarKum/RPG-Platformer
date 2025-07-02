@@ -41,6 +41,20 @@ public class Enemy : Entity, IDamageable
         enemyStateMachine.currentState.Update();
     }
 
+    protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
+    {
+        var originalMoveSpeed = moveSpeed;
+        var originalAnimSpeed = animator.speed;
+        var speedMultiplier = 1 - slowMultiplier;
+        
+        moveSpeed *= speedMultiplier;
+        animator.speed *= speedMultiplier;
+        
+        yield return new WaitForSeconds(duration);
+
+        moveSpeed = originalMoveSpeed;
+        animator.speed = originalAnimSpeed;
+    }
     public void FreezeTime(bool _timeFrozen)
     {
         if (_timeFrozen)
@@ -81,13 +95,10 @@ public class Enemy : Entity, IDamageable
 
     public virtual bool CanBeStunned()
     {
-        if (_canBeStunned)
-        {
-            CloseCounterAttackWindow();
-            return true;
-        }
-        
-        return false;
+        if (!_canBeStunned) return false;
+        CloseCounterAttackWindow();
+        return true;
+
     }
 
     public void AnimationTrigger() => enemyStateMachine.currentState.AnimationFinishTrigger();
@@ -105,5 +116,6 @@ public class Enemy : Entity, IDamageable
     {
         return isDead;
     }
+    
     
 }

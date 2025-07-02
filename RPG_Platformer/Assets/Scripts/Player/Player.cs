@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
 
-public class Player : Entity
+public class Player : Entity, IDamageable
 {
     [Header("Attack Details")]
     public Vector2[] attackMovement;
@@ -90,6 +90,36 @@ public class Player : Entity
         base.Update();
         playerStateMachine.currentState.Update();
         CheckForDashInput();
+    }
+
+    protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
+    {
+        var originalMoveSpeed = moveSpeed;
+        var originalJumpForce = jumpForce;
+        var originalAnimSpeed = animator.speed;
+        var originalDashSpeed = dashSpeed;
+        var originalAttackMovement = attackMovement;
+        var speedMultiplier = 1 - slowMultiplier;
+        
+        moveSpeed *= speedMultiplier;
+        jumpForce *= speedMultiplier;
+        dashSpeed *= speedMultiplier;
+        animator.speed *= speedMultiplier;
+        for (var i = 0; i < attackMovement.Length; i++)
+        {
+            attackMovement[i] *= attackMovement[i];
+        }
+        
+        yield return new WaitForSeconds(duration);
+        
+        moveSpeed = originalMoveSpeed;
+        jumpForce = originalJumpForce;
+        dashSpeed = originalDashSpeed;
+        animator.speed = originalAnimSpeed;
+        for (var i = 0; i < attackMovement.Length; i++)
+        {
+            attackMovement[i] = originalAttackMovement[i];
+        }
     }
 
     public IEnumerator BusyFor(float _seconds)

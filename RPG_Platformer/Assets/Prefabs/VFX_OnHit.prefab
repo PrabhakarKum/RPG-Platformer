@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 5335043305336985743}
   - component: {fileID: 6589323043487232749}
   m_Layer: 0
-  m_Name: On HitVFX
+  m_Name: VFX_OnHit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,6 +155,8 @@ MonoBehaviour:
   destroyDelay: 1
   randomOffset: 1
   randomRotation: 1
+  minRotation: 0
+  maxRotation: 360
   xMinOffset: -0.2
   xMaxOffset: 0.2
   yMinOffset: -0.2

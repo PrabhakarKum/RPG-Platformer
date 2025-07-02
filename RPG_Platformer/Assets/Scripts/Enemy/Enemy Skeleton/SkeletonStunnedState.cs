@@ -24,7 +24,7 @@ public class SkeletonStunnedState : EnemyState
     {
         base.Enter();
         
-        enemySkeleton.EntityVFX.InvokeRepeating("RedColorBlink", 0f, 0.1f);
+        enemySkeleton.entityVFX.InvokeRepeating("RedColorBlink", 0f, 0.1f);
         stateTimer = enemySkeleton.stunDuration;
         enemySkeleton.rigidBody.velocity = new Vector2(-enemySkeleton.facingDirection * enemySkeleton.stunDirection.x, enemySkeleton.stunDirection.y);
     }
@@ -32,6 +32,6 @@ public class SkeletonStunnedState : EnemyState
     public override void Exit()
     {
         base.Exit();
-        enemySkeleton.EntityVFX.Invoke("CancelRedBlink", 0f);
+        enemySkeleton.entityVFX.Invoke("CancelRedBlink", 0f);
     }
 }

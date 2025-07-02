@@ -6,7 +6,11 @@ using UnityEngine;
 public class EnemySkeletonAnimationTriggers : MonoBehaviour
 {
    public EnemySkeleton enemySkeleton;
-   [SerializeField] private float damageAmount;
+   private Entity_Stats _stats;
+   private void Awake()
+   {
+      _stats = GetComponentInParent<Entity_Stats>();
+   }
    public void AnimationTriggers()
    {
       enemySkeleton.AnimationTrigger();
@@ -16,10 +20,15 @@ public class EnemySkeletonAnimationTriggers : MonoBehaviour
    {
       Collider2D[] colliders = Physics2D.OverlapCircleAll(enemySkeleton.attackCheck.position, enemySkeleton.attackCheckRadius);
 
-      foreach (var hit in colliders)
+      foreach (var target in colliders)
       {
-         if (hit.GetComponent<Player>() != null) 
-             hit.GetComponent<Player>().TakeDamage(damageAmount, hit.transform, transform);
+         var damageable = target.GetComponent<IDamageable>();
+         var damage = _stats.GetPhysicalDamage(out var isCritical, 0.6f);
+         var elementalDamage = _stats.GetElementalDamage(out var element, 0.6f);
+         damageable?.TakeDamage(damage, elementalDamage, element,target.transform, _stats.transform, isCritical);
+            
+         if(element != ElementType.None)
+            enemySkeleton.ApplyStatusEffect(target.transform, element);
       }
    }
 

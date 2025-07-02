@@ -10,7 +10,7 @@ public class Entity : MonoBehaviour
     [Header("KnockBack Info")]
     [SerializeField] protected Vector2 onDamageKnockBack;
     [SerializeField] protected float knockBackDuration;
-    private bool _isKnocked = false;
+    private bool _isKnocked;
     [Space]
     [Range(0, 1)] 
     [SerializeField] private float heavyDamageThreshold = 0.3f;
@@ -31,23 +31,28 @@ public class Entity : MonoBehaviour
     [SerializeField] protected bool isDead = false;
     public int facingDirection  = 1;
     private bool _facingRight = true;
+
+    [Header("Status Effect Details")] 
+    [SerializeField] private float defaultDuration = 3;
+    [SerializeField] private float chilledSlowMultiplier = 0.2f;
+
+    private Coroutine _slowDownCo;
     
     #region Components
+    
+    private Slider healthBar;
+    private Entity_Stats stats;
+    private SpriteRenderer spriteRenderer;
     public Animator animator {get; private set;}
     public Rigidbody2D rigidBody {get; private set;}
-    public Entity_VFX EntityVFX {get; private set;}
-
-    public Slider healthBar {get; private set;}
-    public Entity_Stats stats { get; private set;}
-    
-    public SpriteRenderer spriteRenderer {get; private set;}
+    public Entity_VFX entityVFX {get; private set;}
     
     #endregion
 
     public event Action OnFlipped; 
     protected virtual void Awake()
     {
-        EntityVFX = GetComponent<Entity_VFX>();
+        entityVFX = GetComponent<Entity_VFX>();
         healthBar = GetComponentInChildren<Slider>();
         stats = GetComponent<Entity_Stats>();
     }
@@ -66,7 +71,7 @@ public class Entity : MonoBehaviour
         
     }
 
-    public virtual void TakeDamage(float damage, Transform target, Transform damageDealer)
+    public virtual void TakeDamage(float damage, float elementalDamage, ElementType element, Transform target, Transform damageDealer, bool isCritical)
     {
         if(isDead)
             return;
@@ -77,13 +82,41 @@ public class Entity : MonoBehaviour
             return;
         }
         
-        ReduceHp(damage);
-        EntityVFX.CreateOnHitVFX(target);
-        EntityVFX.StartCoroutine("FlashFX");
-        StartCoroutine(HitKnockBack(damage,damageDealer));
+        var attackerStats = damageDealer.GetComponent<Entity_Stats>();
+        var armourReduction = attackerStats != null ? attackerStats.GetArmourReduction() : 0;
+        
+        var mitigation = stats.GetArmourMitigation(armourReduction);
+        var physicalDamageTaken = damage * (1 - mitigation);
+
+        var resistance = stats.GetElementalResistance(element);
+        var elementalDamageTaken = elementalDamage * (1 - resistance);
+        
+        
+        entityVFX.UpdateOnHitColor(element);
+        entityVFX.CreateOnHitVFX(target, isCritical);
+        entityVFX.StartCoroutine(entityVFX.FlashFX());
+        StartCoroutine(HitKnockBack(physicalDamageTaken,damageDealer));
+        ReduceHp(physicalDamageTaken + elementalDamageTaken);
     }
 
-    private void ReduceHp(float damage)
+    public void ApplyStatusEffect(Transform target, ElementType element, float scaleFactor = 1f)
+    {
+        var statusHandler = target.GetComponent<Entity_StatusHandler>();
+        if(statusHandler == null)
+            return;
+
+        if (element == ElementType.Ice && statusHandler.CanBeApplied(ElementType.Ice))
+        {
+            statusHandler.ApplyChilledEffect(defaultDuration, chilledSlowMultiplier);
+        }
+        else if (element == ElementType.Fire && statusHandler.CanBeApplied(ElementType.Fire))
+        {
+            var fireDamage = stats.offence.fireDamage.GetValue() * scaleFactor;
+            statusHandler.ApplyBurnEffect(defaultDuration, fireDamage);
+        }
+    }
+
+    public void ReduceHp(float damage)
     {
         currentHp -= damage;
         UpdateHealthBar();
@@ -134,6 +167,19 @@ public class Entity : MonoBehaviour
     protected virtual void EntityDeath()
     {
         
+    }
+
+    public virtual void SlowDownEntity(float duration, float slowMultiplier)
+    {
+        if(_slowDownCo != null)
+            StopCoroutine(_slowDownCo);
+
+        _slowDownCo = StartCoroutine(SlowDownEntityCoroutine(duration, slowMultiplier));
+    }
+
+    protected virtual IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
+    {
+        yield return null;
     }
     
     #region Collision

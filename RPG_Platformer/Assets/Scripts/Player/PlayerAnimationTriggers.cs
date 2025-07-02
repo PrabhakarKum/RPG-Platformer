@@ -18,17 +18,16 @@ public class PlayerAnimationTriggers : MonoBehaviour
 
     private void AttackTriggers()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(player.attackCheck.position, player.attackCheckRadius);
-        foreach (var hit in colliders)
+        var colliders = Physics2D.OverlapCircleAll(player.attackCheck.position, player.attackCheckRadius);
+        foreach (var target in colliders)
         {
-            // if (hit.GetComponent<Enemy>() != null)
-            //     hit.GetComponent<Enemy>().TakeDamage(damage);
-
-            // if(hit.GetComponent<Chest>() != null)
-            //     hit.GetComponent<Chest>().TakeDamage(damage);
+            var damageable = target.GetComponent<IDamageable>();
+            var damage = _stats.GetPhysicalDamage(out var isCritical);
+            var elementalDamage = _stats.GetElementalDamage(out var element, 0.6f);
+            damageable?.TakeDamage(damage, elementalDamage, element,target.transform, _stats.transform, isCritical);
             
-            IDamageable damageable = hit.GetComponent<IDamageable>();
-            damageable?.TakeDamage(_stats.GetPhysicalDamage(), hit.transform, transform);
+            if(element != ElementType.None)
+                player.ApplyStatusEffect(target.transform, element);
         }
     }
 

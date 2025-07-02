@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    public void TakeDamage(float damage, Transform position, Transform damageDealer);
+    public void TakeDamage(float damage,float elementalDamage, ElementType element, Transform position, Transform damageDealer, bool isCritical = false);
 }

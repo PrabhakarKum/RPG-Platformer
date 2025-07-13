@@ -21,6 +21,7 @@ public class SkeletonAttackState : EnemyState
     public override void Enter()
     {
         base.Enter();
+        SyncAttackSpeed();
     }
 
     public override void Exit()

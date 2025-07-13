@@ -3,6 +3,8 @@ using System;
 [Serializable]
 public class Stat_OffenceGroup
 {
+    public Stat attackSpeed;
+    
     //Physical Damage
     public Stat damage;
     public Stat criticalPower;

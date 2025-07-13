@@ -2,19 +2,21 @@ using UnityEngine;
 
 public class EnemyState
 {
-    protected EnemyStateMachine enemyStateMachine;
-    protected Enemy enemyBase;
+    protected readonly EnemyStateMachine enemyStateMachine;
+    private readonly Enemy _enemy;
+    private readonly Entity_Stats _entityStats;
     
     private string animBoolName;
     
     protected float stateTimer;
     protected bool triggerCalled;
-    
-    public EnemyState(Enemy _enemyBase, EnemyStateMachine _enemyStateMachine, string _animBoolName)
+
+    protected EnemyState(Enemy _enemy, EnemyStateMachine _enemyStateMachine, string _animBoolName)
     {
-        enemyBase = _enemyBase;
+        this._enemy = _enemy;
         enemyStateMachine = _enemyStateMachine;
         animBoolName = _animBoolName;
+        _entityStats = _enemy.entityStats;
     }
 
     public virtual void Update()
@@ -24,17 +26,23 @@ public class EnemyState
     public virtual void Enter()
     { 
         triggerCalled = false;  
-        enemyBase.animator.SetBool(animBoolName, true);
+        _enemy.animator.SetBool(animBoolName, true);
     }
 
     public virtual void Exit()
     {
-        enemyBase.animator.SetBool(animBoolName, false);
+        _enemy.animator.SetBool(animBoolName, false);
     }
 
     public void AnimationFinishTrigger()
     {
         triggerCalled = true;
+    }
+
+    protected void SyncAttackSpeed()
+    {
+        var attackSpeed = _entityStats.offence.attackSpeed.GetValue();
+        _enemy.animator.SetFloat("AttackSpeedMultiplier", attackSpeed);
     }
     
     

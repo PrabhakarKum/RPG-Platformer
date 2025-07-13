@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySkeletonAnimationTriggers : MonoBehaviour
 {
    public EnemySkeleton enemySkeleton;
+   public DamageScaleData basicAttackScale;
    private Entity_Stats _stats;
    private void Awake()
    {
@@ -18,17 +16,23 @@ public class EnemySkeletonAnimationTriggers : MonoBehaviour
 
    public void AttackTrigger()
    {
-      Collider2D[] colliders = Physics2D.OverlapCircleAll(enemySkeleton.attackCheck.position, enemySkeleton.attackCheckRadius);
+      var colliders = Physics2D.OverlapCircleAll(enemySkeleton.attackCheck.position, enemySkeleton.attackCheckRadius);
 
       foreach (var target in colliders)
       {
          var damageable = target.GetComponent<IDamageable>();
-         var damage = _stats.GetPhysicalDamage(out var isCritical, 0.6f);
-         var elementalDamage = _stats.GetElementalDamage(out var element, 0.6f);
-         damageable?.TakeDamage(damage, elementalDamage, element,target.transform, _stats.transform, isCritical);
-            
-         if(element != ElementType.None)
-            enemySkeleton.ApplyStatusEffect(target.transform, element);
+         var attackData = _stats.GetAttackData(basicAttackScale);
+
+         var physicalDamage = attackData.physicalDamage;
+         var elementalDamage = attackData.elementalDamage;
+         var element = attackData.element;
+         
+         damageable?.TakeDamage(physicalDamage, elementalDamage, element,target.transform, _stats.transform, attackData.isCritical);
+         
+         var statusHandler = target.GetComponent<Entity_StatusHandler>();
+         if (element != ElementType.None)
+            statusHandler?.ApplyStatusEffect(element, attackData.effectData);
+         
       }
    }
 

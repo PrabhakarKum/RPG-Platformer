@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class PlayerAimSwordState : PlayerState
 {
+    private Camera camera;
+
     // Start is called before the first frame update
     public PlayerAimSwordState(Player player, PlayerStateMachine playerStateMachine, string animBoolName) : base(player, playerStateMachine, animBoolName)
     {
     }
 
-
     public override void Enter()
     {
         base.Enter();
+        camera = Camera.main;
         player.skillManager.swordSkill.DotsActive(true);
     }
 
@@ -27,17 +29,25 @@ public class PlayerAimSwordState : PlayerState
             playerStateMachine.ChangeState(player.idleState);
         }
         
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        if (player.transform.position.x > mousePos.x && player.facingDirection == 1)
-            player.Flip();
-        
-        else if(player.transform.position.x < mousePos.x && player.facingDirection == -1)
-            player.Flip();
+        DirectionToMouse();
     }
 
     public override void Exit()
     {
         base.Exit();
         player.StartCoroutine("BusyFor", 0.2f);
+    }
+    
+    private void DirectionToMouse()
+    {
+        if (camera == null) return;
+        Vector2 worldMousePosition = camera.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 playerPosition = player.transform.position;
+
+        if (playerPosition.x > worldMousePosition.x && player.facingDirection == 1)
+            player.Flip();
+        
+        else if(playerPosition.x < worldMousePosition.x && player.facingDirection == -1)
+            player.Flip();
     }
 }

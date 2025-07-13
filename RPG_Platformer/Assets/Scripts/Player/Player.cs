@@ -6,9 +6,11 @@ using UnityEngine.Assertions.Comparers;
 public class Player : Entity, IDamageable
 {
     [Header("Attack Details")]
+    public bool hasSword = true;
     public Vector2[] attackMovement;
-    public float counterAttackDuration = 0.2f;
+    public float counterAttackDuration = 0.2f; 
     public bool isBusy {get; private set;}
+
     
     public static event Action OnPlayerDeath;
     
@@ -32,9 +34,11 @@ public class Player : Entity, IDamageable
     #endregion
     
    #region Components
-   
    public SkillManager skillManager {get; private set;}
+   public UI_Manager uiManager {get; private set;}
+   public Entity_StatusHandler statusHandler {get; private set;}
    public GameObject sword{get; private set;}
+   
    #endregion
     
     #region States
@@ -58,30 +62,33 @@ public class Player : Entity, IDamageable
     protected override void Awake()
     {
         base.Awake();
+
+        uiManager = FindAnyObjectByType<UI_Manager>();
+        statusHandler = GetComponent<Entity_StatusHandler>();
         playerStateMachine = new PlayerStateMachine();
         
-        idleState = new PlayerIdleState(this, this.playerStateMachine, "Idle");
-        moveState = new PlayerMoveState(this, this.playerStateMachine, "Move");
-        jumpState = new PlayerJumpState(this, this.playerStateMachine, "Jump");
-        airState  = new PlayerAirState(this, this.playerStateMachine, "Jump");
-        dashState = new PlayerDashState(this, this.playerStateMachine, "Dash");
-        deathState = new PlayerDeathState(this, this.playerStateMachine, "Death");
+        idleState = new PlayerIdleState(this, playerStateMachine, "Idle");
+        moveState = new PlayerMoveState(this, playerStateMachine, "Move");
+        jumpState = new PlayerJumpState(this, playerStateMachine, "Jump");
+        airState  = new PlayerAirState(this, playerStateMachine, "Jump");
+        dashState = new PlayerDashState(this, playerStateMachine, "Dash");
+        deathState = new PlayerDeathState(this, playerStateMachine, "Death");
         
-        wallSlideState = new PlayerWallSlideState(this, this.playerStateMachine, "WallSlide");
-        wallJumpState =  new PlayerWallJumpState(this, this.playerStateMachine, "Jump");
+        wallSlideState = new PlayerWallSlideState(this, playerStateMachine, "WallSlide");
+        wallJumpState =  new PlayerWallJumpState(this, playerStateMachine, "Jump");
         
-        primaryAttackState =  new PlayerPrimaryAttackState(this, this.playerStateMachine, "Attack");
-        counterAttackState =  new PlayerCounterAttackState(this, this.playerStateMachine, "CounterAttack");
-        aimSwordState      = new PlayerAimSwordState(this, this.playerStateMachine, "AimSword");
-        catchSwordState    = new PlayerCatchSwordState(this, this.playerStateMachine, "CatchSword");
+        primaryAttackState =  new PlayerPrimaryAttackState(this, playerStateMachine, "Attack");
+        counterAttackState =  new PlayerCounterAttackState(this, playerStateMachine, "CounterAttack");
+        aimSwordState      = new PlayerAimSwordState(this, playerStateMachine, "AimSword");
+        catchSwordState    = new PlayerCatchSwordState(this, playerStateMachine, "CatchSword");
         
-        blackHoleState = new PlayerBlackHoleState(this, this.playerStateMachine, "Jump");
+        blackHoleState = new PlayerBlackHoleState(this, playerStateMachine, "Jump");
     }
 
     protected override void Start()
     {
         base.Start();
-        skillManager = SkillManager.instance;
+        skillManager = SkillManager.Instance;
         playerStateMachine.Initialize(idleState);
     }
 
@@ -90,10 +97,15 @@ public class Player : Entity, IDamageable
         base.Update();
         playerStateMachine.currentState.Update();
         CheckForDashInput();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OpenSkillTree();
+        }
     }
 
     protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
     {
+        Debug.Log($"player slow multiplier: {slowMultiplier}");
         var originalMoveSpeed = moveSpeed;
         var originalJumpForce = jumpForce;
         var originalAnimSpeed = animator.speed;
@@ -101,13 +113,14 @@ public class Player : Entity, IDamageable
         var originalAttackMovement = attackMovement;
         var speedMultiplier = 1 - slowMultiplier;
         
+        Debug.Log("player speed multiplier: "+ speedMultiplier);
         moveSpeed *= speedMultiplier;
         jumpForce *= speedMultiplier;
         dashSpeed *= speedMultiplier;
         animator.speed *= speedMultiplier;
         for (var i = 0; i < attackMovement.Length; i++)
         {
-            attackMovement[i] *= attackMovement[i];
+            attackMovement[i] *= speedMultiplier;
         }
         
         yield return new WaitForSeconds(duration);
@@ -136,7 +149,7 @@ public class Player : Entity, IDamageable
         if (IsWallDetected())
             return;
         
-        if (Input.GetKeyDown(KeyCode.LeftShift) && SkillManager.instance.dashSkill.CanUseSkill())
+        if (Input.GetKeyDown(KeyCode.LeftShift) && SkillManager.Instance.dashSkill.CanUseSkill())
         {
             dashDirection = Input.GetAxisRaw("Horizontal");
             if (dashDirection == 0)
@@ -171,6 +184,11 @@ public class Player : Entity, IDamageable
     {
         currentJumpCount = 0;
     }
-    
-    
+
+    private void OpenSkillTree()
+    { 
+        uiManager.ToggleSkillTreeUI();
+    }
+
+    public void TeleportPlayer(Vector3 position) => transform.position = position;
 }

@@ -22,7 +22,7 @@ public class Enemy : Entity, IDamageable
     public Vector2 stunDirection;
     [SerializeField] private bool _canBeStunned;
     
-    [SerializeField] protected GameObject counterImage;
+    public GameObject counterImage;
     [HideInInspector] public float flipThreshHold = 0.1f;
     
 
@@ -47,6 +47,7 @@ public class Enemy : Entity, IDamageable
         var originalAnimSpeed = animator.speed;
         var speedMultiplier = 1 - slowMultiplier;
         
+        Debug.Log("enemy speed multiplier: "+ speedMultiplier);
         moveSpeed *= speedMultiplier;
         animator.speed *= speedMultiplier;
         

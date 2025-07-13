@@ -1,11 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SkillManager : MonoBehaviour
 {
-    public static SkillManager instance;
+    public static SkillManager Instance;
     public DashSkill dashSkill {get; private set;}
     public CloneSkill cloneSkill {get; private set;}
     
@@ -16,10 +13,10 @@ public class SkillManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null)
-            Destroy(instance.gameObject);
+        if (Instance != null)
+            Destroy(Instance.gameObject);
         else
-            instance = this;
+            Instance = this;
     }
 
     private void Start()
@@ -29,5 +26,21 @@ public class SkillManager : MonoBehaviour
         swordSkill = GetComponent<SwordSkill>();
         blackHoleSkill = GetComponent<BlackHoleSkill>();
         crystalSkill = GetComponent<CrystalSkill>();
+    }
+
+    public Skill_Base GetSkillByType(SkillType type)
+    {
+        switch (type)
+        {
+            case SkillType.DashSkill:
+                return dashSkill;
+            
+            case SkillType.TimeCrystalSkill:
+                return crystalSkill;
+            
+            default: 
+                Debug.Log($"Skill type {type} not found");
+                return null;
+        }
     }
 }

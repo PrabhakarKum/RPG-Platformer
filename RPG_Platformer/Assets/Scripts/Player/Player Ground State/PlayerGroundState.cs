@@ -33,7 +33,7 @@ public class PlayerGroundState : PlayerState
             playerStateMachine.ChangeState(player.counterAttackState);
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && player.hasSword)
         {
             playerStateMachine.ChangeState(player.primaryAttackState);
         }

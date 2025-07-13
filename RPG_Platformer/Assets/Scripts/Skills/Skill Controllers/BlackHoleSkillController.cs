@@ -11,7 +11,7 @@ public class BlackHoleSkillController : MonoBehaviour
     private float _growSpeed;
     private float _shrinkSpeed;
     
-    private bool _canGrow = true;
+    private readonly bool _canGrow = true;
     private bool _canShrink;
     private bool _canCreateHotkeys = true;
     private bool _cloneAttackReleased;
@@ -22,8 +22,8 @@ public class BlackHoleSkillController : MonoBehaviour
     private float _cloneAttackTimer;
     private float _blackHoleTimer;
 
-    private List<Transform> _targets = new List<Transform>();
-    private List<GameObject> _createdHotKeys = new List<GameObject>();
+    private readonly List<Transform> _targets = new List<Transform>();
+    private readonly List<GameObject> _createdHotKeys = new List<GameObject>();
     
     public bool playerCanExitState { get; private set; }
 
@@ -64,13 +64,11 @@ public class BlackHoleSkillController : MonoBehaviour
             transform.localScale = Vector2.Lerp(transform.localScale, new Vector2(_maxSize, _maxSize), _growSpeed * Time.deltaTime );
         }
 
-        if (_canShrink)
+        if (!_canShrink) return;
+        transform.localScale = Vector2.Lerp(transform.localScale, new Vector2(-1, -1), _shrinkSpeed *Time.deltaTime);
+        if (transform.localScale.x < 0)
         {
-            transform.localScale = Vector2.Lerp(transform.localScale, new Vector2(-1, -1), _shrinkSpeed *Time.deltaTime);
-            if (transform.localScale.x < 0)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
     }
 
@@ -91,26 +89,23 @@ public class BlackHoleSkillController : MonoBehaviour
 
     private void CloneAttackLogic()
     {
-        if (_cloneAttackTimer < 0 && _cloneAttackReleased && _amountOfAttacks > 0)
+        if (!(_cloneAttackTimer < 0) || !_cloneAttackReleased || _amountOfAttacks <= 0) return;
+        _cloneAttackTimer = _cloneAttackCooldown;
+        var randomIndex = Random.Range(0, _targets.Count);
+
+        float xOffset;
+            
+        if (Random.Range(0, 100) > 50)
+            xOffset = 0.2f;
+        else
+            xOffset = -0.2f;
+            
+        SkillManager.Instance.cloneSkill.CreateClone(_targets[randomIndex], new Vector2(xOffset, 0));
+        _amountOfAttacks--;
+
+        if (_amountOfAttacks <= 0)
         {
-            _cloneAttackTimer = _cloneAttackCooldown;
-            int randomIndex = Random.Range(0, _targets.Count);
-
-            float xOffset;
-            
-            if (Random.Range(0, 100) > 50)
-                xOffset = 0.2f;
-            else
-                xOffset = -0.2f;
-            
-            SkillManager.instance.cloneSkill.CreateClone(_targets[randomIndex], new Vector2(xOffset, 0));
-            _amountOfAttacks--;
-
-            if (_amountOfAttacks <= 0)
-            {
-               Invoke("FinishBlackHoleAbility",1f);
-            }
-                
+            Invoke(nameof(FinishBlackHoleAbility),1f);
         }
     }
 
@@ -127,9 +122,9 @@ public class BlackHoleSkillController : MonoBehaviour
         if(_createdHotKeys.Count <= 0)
             return;
 
-        for (int i = 0; i < _createdHotKeys.Count; i++)
+        foreach (var keys in _createdHotKeys)
         {
-            Destroy(_createdHotKeys[i]);
+            Destroy(keys);
         }
     }
 

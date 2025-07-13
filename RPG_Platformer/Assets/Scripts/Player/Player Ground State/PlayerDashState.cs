@@ -10,12 +10,14 @@ public class PlayerDashState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        player.skillManager.cloneSkill.CreateClone(player.transform, Vector2.zero);
+        //player.skillManager.cloneSkill.CreateClone(player.transform, Vector2.zero);  // original
+        player.skillManager.dashSkill.OnStartEffect(player.transform, Vector2.zero);
         stateTimer = player.dashDuration;
     }
     public override void Exit()
     {
         base.Exit();
+        player.skillManager.dashSkill.OnEndEffect(player.transform, Vector2.zero);
         player.SetVelocity(0, player.rigidBody.velocity.y);
     }
     public override void Update()

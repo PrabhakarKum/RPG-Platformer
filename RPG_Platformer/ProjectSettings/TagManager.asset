@@ -17,8 +17,8 @@ TagManager:
   - Sword
   - IgnoreEnemy
   - Collectible
-  - 
-  - 
+  - VFX
+  - Object_Buff
   - 
   - 
   - 
@@ -55,4 +55,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 1209029207
+    locked: 0
+  - name: VFX
+    uniqueID: 2361551409
     locked: 0

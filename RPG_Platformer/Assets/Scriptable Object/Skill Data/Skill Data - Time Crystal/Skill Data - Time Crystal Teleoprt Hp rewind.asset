@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5ef1b46c075bbe4da826416dcfd620e, type: 3}
+  m_Name: Skill Data - Time Crystal Teleoprt Hp rewind
+  m_EditorClassIdentifier: 
+  cost: 4
+  unlockedByDefault: 0
+  skillType: 1
+  upgradeData:
+    upgradeType: 10
+    cooldown: 4
+  icon: {fileID: 60880362, guid: d4745ecc11c66ed4d9d55b2a27e5fab2, type: 3}
+  displayName: Revert Prism
+  description: When you swap places with Time Shard, your health reverts to the ammount
+    you had when the crystal was created

@@ -98,6 +98,7 @@ public class SwordSkillController : MonoBehaviour
          if (Vector2.Distance(transform.position, _player.transform.position) < 0.15f)
          {
             _animator.SetBool("Spinning", false);
+            _player.hasSword = true;
             _player.CatchTheSword();
          }
       }

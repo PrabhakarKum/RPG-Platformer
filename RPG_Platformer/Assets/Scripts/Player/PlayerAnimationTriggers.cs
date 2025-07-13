@@ -1,9 +1,10 @@
-using System;
 using UnityEngine;
 
 public class PlayerAnimationTriggers : MonoBehaviour
 {
     public Player player;
+    public DamageScaleData basicAttackScale;
+    
     private Entity_Stats _stats;
 
     private void Awake()
@@ -22,18 +23,23 @@ public class PlayerAnimationTriggers : MonoBehaviour
         foreach (var target in colliders)
         {
             var damageable = target.GetComponent<IDamageable>();
-            var damage = _stats.GetPhysicalDamage(out var isCritical);
-            var elementalDamage = _stats.GetElementalDamage(out var element, 0.6f);
-            damageable?.TakeDamage(damage, elementalDamage, element,target.transform, _stats.transform, isCritical);
+            var statusHandler = target.GetComponent<Entity_StatusHandler>();
             
-            if(element != ElementType.None)
-                player.ApplyStatusEffect(target.transform, element);
+            var attackData = _stats.GetAttackData(basicAttackScale);
+            var physicalDamage = attackData.physicalDamage;
+            var elementalDamage = attackData.elementalDamage;
+            var element = attackData.element;
+            
+            damageable?.TakeDamage(physicalDamage, elementalDamage, element,target.transform, _stats.transform, attackData.isCritical);
+            
+            if (element != ElementType.None)
+                statusHandler?.ApplyStatusEffect(element, attackData.effectData);
         }
     }
 
     private void ThrowSword()
     {
-        SkillManager.instance.swordSkill.CreateSword();
+        SkillManager.Instance.swordSkill.CreateSword();
     }
     
 }

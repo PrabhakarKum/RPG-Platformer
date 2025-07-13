@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlackHoleSkill : Skill
+public class BlackHoleSkill : Skill_Base
 {
     [SerializeField] private GameObject blackHolePrefab;
     [SerializeField] private float maxSize;
@@ -29,7 +29,7 @@ public class BlackHoleSkill : Skill
         return base.CanUseSkill();
     }
 
-    public override void UseSkill()
+    protected override void UseSkill()
     {
         base.UseSkill();
         

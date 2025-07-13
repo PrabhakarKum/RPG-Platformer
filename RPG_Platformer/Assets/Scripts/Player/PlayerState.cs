@@ -3,12 +3,13 @@ using UnityEngine;
 
 public class PlayerState
 {
-    protected PlayerStateMachine playerStateMachine;
-    protected Player player;
+    protected readonly Player player;
+    protected readonly PlayerStateMachine playerStateMachine;
+    private readonly Entity_Stats _entityStats;
 
     protected float xInput;
     protected float yInput;
-    private string animBoolName;
+    private readonly string animBoolName;
 
     protected float stateTimer;
     protected bool triggerCalled;
@@ -18,6 +19,7 @@ public class PlayerState
         this.playerStateMachine = playerStateMachine;
         this.player = player;
         this.animBoolName = animBoolName;
+        _entityStats = player.entityStats;
     }
 
     public virtual void Enter()
@@ -39,8 +41,14 @@ public class PlayerState
         player.animator.SetBool(animBoolName, false);
     }
 
-    public virtual void AnimationFinishTrigger()
+    public void AnimationFinishTrigger()
     {
         triggerCalled = true;
+    }
+
+    protected void SyncAttackSpeed()
+    {
+        var attackSpeed = _entityStats.offence.attackSpeed.GetValue();
+        player.animator.SetFloat("AttackSpeedMultiplier", attackSpeed);
     }
 }

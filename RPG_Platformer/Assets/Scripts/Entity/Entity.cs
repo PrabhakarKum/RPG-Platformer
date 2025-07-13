@@ -26,23 +26,24 @@ public class Entity : MonoBehaviour
     [SerializeField] protected Transform wallCheck;
     [SerializeField] protected float wallCheckDistance;
     
-    [Header("Health Info")]
-    [SerializeField] protected float currentHp;
-    [SerializeField] protected bool isDead = false;
+    
+    [Header("Health & HealthRegen Info")]
+    [SerializeField] protected float currentHealth;
+    [SerializeField] protected bool isDead;
+    [SerializeField] private float regenInterval = 1f;
+    [SerializeField] private bool canRegenerateHealth = true;
+    
+    [Header("Flip Info")]
     public int facingDirection  = 1;
     private bool _facingRight = true;
-
-    [Header("Status Effect Details")] 
-    [SerializeField] private float defaultDuration = 3;
-    [SerializeField] private float chilledSlowMultiplier = 0.2f;
 
     private Coroutine _slowDownCo;
     
     #region Components
     
-    private Slider healthBar;
-    private Entity_Stats stats;
-    private SpriteRenderer spriteRenderer;
+    private Slider _healthBar;
+    private SpriteRenderer _spriteRenderer;
+    public Entity_Stats entityStats;
     public Animator animator {get; private set;}
     public Rigidbody2D rigidBody {get; private set;}
     public Entity_VFX entityVFX {get; private set;}
@@ -53,17 +54,21 @@ public class Entity : MonoBehaviour
     protected virtual void Awake()
     {
         entityVFX = GetComponent<Entity_VFX>();
-        healthBar = GetComponentInChildren<Slider>();
-        stats = GetComponent<Entity_Stats>();
+        rigidBody = GetComponent<Rigidbody2D>();
+        animator = GetComponentInChildren<Animator>();
+        _healthBar = GetComponentInChildren<Slider>();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        entityStats = GetComponent<Entity_Stats>();
+        
+        currentHealth = entityStats.GetMaxHealth();
+        UpdateHealthBar();
+        
+        InvokeRepeating(nameof(RegenerateHealth), 0, regenInterval);
     }
 
     protected virtual void Start()
     {
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        animator = GetComponentInChildren<Animator>();
-        rigidBody = GetComponent<Rigidbody2D>();
-        currentHp = stats.GetMaxHealth();
-        UpdateHealthBar();
+       
     }
 
     protected virtual void Update()
@@ -85,51 +90,68 @@ public class Entity : MonoBehaviour
         var attackerStats = damageDealer.GetComponent<Entity_Stats>();
         var armourReduction = attackerStats != null ? attackerStats.GetArmourReduction() : 0;
         
-        var mitigation = stats.GetArmourMitigation(armourReduction);
+        var mitigation = entityStats.GetArmourMitigation(armourReduction);
         var physicalDamageTaken = damage * (1 - mitigation);
 
-        var resistance = stats.GetElementalResistance(element);
+        var resistance = entityStats.GetElementalResistance(element);
         var elementalDamageTaken = elementalDamage * (1 - resistance);
         
         
-        entityVFX.UpdateOnHitColor(element);
-        entityVFX.CreateOnHitVFX(target, isCritical);
-        entityVFX.StartCoroutine(entityVFX.FlashFX());
+        PlayOnHitFeedback(target, element, isCritical);
         StartCoroutine(HitKnockBack(physicalDamageTaken,damageDealer));
         ReduceHp(physicalDamageTaken + elementalDamageTaken);
     }
 
-    public void ApplyStatusEffect(Transform target, ElementType element, float scaleFactor = 1f)
+    private void PlayOnHitFeedback(Transform target, ElementType element, bool isCritical)
     {
-        var statusHandler = target.GetComponent<Entity_StatusHandler>();
-        if(statusHandler == null)
-            return;
-
-        if (element == ElementType.Ice && statusHandler.CanBeApplied(ElementType.Ice))
-        {
-            statusHandler.ApplyChilledEffect(defaultDuration, chilledSlowMultiplier);
-        }
-        else if (element == ElementType.Fire && statusHandler.CanBeApplied(ElementType.Fire))
-        {
-            var fireDamage = stats.offence.fireDamage.GetValue() * scaleFactor;
-            statusHandler.ApplyBurnEffect(defaultDuration, fireDamage);
-        }
+        entityVFX.UpdateOnHitColor(element);
+        entityVFX.CreateOnHitVFX(target, isCritical);
+        entityVFX.StartCoroutine(entityVFX.FlashFX());
     }
 
     public void ReduceHp(float damage)
     {
-        currentHp -= damage;
+        currentHealth -= damage;
         UpdateHealthBar();
-        if (currentHp <= 0)
+        if (currentHealth <= 0)
             Die();
+    }
+
+    public float GetHealthPercent() => currentHealth / entityStats.GetMaxHealth();
+
+    public void SetHealthToPercent(float percent)
+    {
+        currentHealth = entityStats.GetMaxHealth() * Mathf.Clamp01(percent);
+        UpdateHealthBar();
     }
 
     private void UpdateHealthBar()
     {
-        if(healthBar == null)
+        if(_healthBar == null)
             return;
         
-        healthBar.value = currentHp / stats.GetMaxHealth();
+        _healthBar.value = currentHealth / entityStats.GetMaxHealth();
+    }
+
+    private void RegenerateHealth()
+    {
+        if (canRegenerateHealth == false)
+            return;
+
+        var regenerateAmount = entityStats.resources.healthRegeneration.GetValue();
+        IncreaseHealth(regenerateAmount);
+        
+    }
+    private void IncreaseHealth(float healAmount)
+    {
+        if(isDead)
+            return;
+
+        var newHealth = currentHealth + healAmount;
+        var maxHealth = entityStats.GetMaxHealth();
+        
+        currentHealth = Mathf.Min(newHealth, maxHealth);
+        UpdateHealthBar();
     }
 
     private void Die()
@@ -141,12 +163,12 @@ public class Entity : MonoBehaviour
     private IEnumerator HitKnockBack(float damage,Transform attacker)
     {
         _isKnocked = true;
-        bool isHeavy = IsHeavyDamage(damage);
+        var isHeavy = IsHeavyDamage(damage);
         
         var direction = CalculateKnockBack(isHeavy, attacker);
         rigidBody.velocity = new Vector2(direction.x, direction.y);
         
-        float duration = isHeavy ? heavyKnockBackDuration : knockBackDuration;
+        var duration = isHeavy ? heavyKnockBackDuration : knockBackDuration;
         yield return new WaitForSeconds(duration);
         rigidBody.velocity = Vector2.zero;
         _isKnocked = false;
@@ -160,16 +182,16 @@ public class Entity : MonoBehaviour
         return knockBack;
     }
 
-    private bool IsHeavyDamage(float damage) => damage / stats.GetMaxHealth() > heavyDamageThreshold;
+    private bool IsHeavyDamage(float damage) => damage / entityStats.GetMaxHealth() > heavyDamageThreshold;
     
-    private bool AttackEvaded() => Random.Range(0, 100) < stats.GetEvasion();
+    private bool AttackEvaded() => Random.Range(0, 100) < entityStats.GetEvasion();
 
     protected virtual void EntityDeath()
     {
         
     }
 
-    public virtual void SlowDownEntity(float duration, float slowMultiplier)
+    public void SlowDownEntity(float duration, float slowMultiplier)
     {
         if(_slowDownCo != null)
             StopCoroutine(_slowDownCo);
@@ -243,8 +265,8 @@ public class Entity : MonoBehaviour
     public void MakeTransparent(bool _isTransparent)
     {
         if (_isTransparent)
-            spriteRenderer.color = Color.clear;
+            _spriteRenderer.color = Color.clear;
         else
-            spriteRenderer.color = Color.white;
+            _spriteRenderer.color = Color.white;
     }
 }

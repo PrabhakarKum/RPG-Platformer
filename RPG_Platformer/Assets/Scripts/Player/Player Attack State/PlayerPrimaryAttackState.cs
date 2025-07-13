@@ -12,7 +12,8 @@ public class PlayerPrimaryAttackState : PlayerState
     public override void Enter()
     {
         base.Enter();
-
+        SyncAttackSpeed();
+        
         //xInput = 0; //need this to fix atk direction 
         if (comboCounter > 2 || Time.time >= lastTimeAttacked + comboWindow)
         {
@@ -21,10 +22,14 @@ public class PlayerPrimaryAttackState : PlayerState
         
         player.animator.SetInteger("ComboCounter", comboCounter);
         
-        float attackDir = player.facingDirection;
+        float attackDir;
         if (xInput != 0)
         {
             attackDir = xInput;
+        }
+        else
+        {
+            attackDir = player.facingDirection;
         }
         
         player.SetVelocity(player.attackMovement[comboCounter].x * attackDir, player.attackMovement[comboCounter].y);

@@ -1,18 +1,21 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Random = UnityEngine.Random;
+
 
 public class Entity_Stats : MonoBehaviour
-{ 
-   public Stat maxHealth;
-
-   public Stat_MajorGroup major;
+{
+   public Stat_SetupSO defaultStatSetup;
+   
+   public Stat_ResourceGroup resources;
    public Stat_DefenceGroup defence;
    public Stat_OffenceGroup offence;
+   public Stat_MajorGroup major;
 
+
+   public AttackData GetAttackData(DamageScaleData scaleData)
+   {
+      return new AttackData(this, scaleData);
+   }
+   
    public float GetElementalDamage(out ElementType element, float scaleFactor = 1f)
    {
       var fireDamage = offence.fireDamage.GetValue();
@@ -91,7 +94,7 @@ public class Entity_Stats : MonoBehaviour
       var criticalChance = baseCriticalChance + bonusCriticalChance;
 
       var baseCriticalPower = offence.criticalPower.GetValue();
-      var bonusCriticalPower = major.strength.GetValue() * 0.5f; // Bonus Critical Power from agility: +0.5% per CritPower
+      var bonusCriticalPower = major.strength.GetValue() * 0.5f; // Bonus Critical Power from agility: +0.5% per Critical Power
       var criticalPower = (baseCriticalPower + bonusCriticalPower)/ 100; // Total Critical Power as multiplier (e.g 110 / 100 = 1.1f - multiplier)
 
       isCritical = Random.Range(0, 100) < criticalChance;
@@ -124,7 +127,7 @@ public class Entity_Stats : MonoBehaviour
    }
    public float GetMaxHealth()
    {
-      var baseMaxHp = maxHealth.GetValue();
+      var baseMaxHp = resources.maxHealth.GetValue();
       var bonusMaxHp =  major.vitality.GetValue() * 5;
       var finalMaxHealth = baseMaxHp + bonusMaxHp;
       return finalMaxHealth;
@@ -142,7 +145,95 @@ public class Entity_Stats : MonoBehaviour
       
       return finalEvasion;
    }
-   
-   
+
+   public Stat GetStatByType(StatType type)
+   {
+      switch (type)
+      {
+         case StatType.MaxHealth:
+            return resources.maxHealth;
+         case StatType.HealthRegeneration:
+            return resources.healthRegeneration;
+         
+         case StatType.Strength:
+            return major.strength;
+         case StatType.Agility:
+            return major.agility;
+         case StatType.Intelligence:
+            return major.intelligence;
+         case StatType.Vitality:
+            return major.vitality;
+         
+         case StatType.AttackSpeed:
+            return offence.attackSpeed;
+         case StatType.Damage:
+            return offence.damage;
+         case StatType.CriticalPower:
+            return offence.criticalPower;
+         case StatType.CriticalChance:
+            return offence.criticalChance;
+         case StatType.ArmourReduction:
+            return offence.armourReduction;
+         
+         case StatType.FireDamage:
+            return offence.fireDamage;
+         case StatType.IceDamage:
+            return offence.iceDamage;
+         case StatType.LightningDamage:
+            return offence.lightningDamage;
+         
+         
+         case StatType.Armour:
+            return defence.armour;
+         case StatType.Evasion:
+            return defence.evasion;
+         case StatType.FireResistant:
+            return defence.fireResistant;
+         case StatType.IceResistant:
+            return defence.iceResistant;
+         case StatType.LightningResistant:
+            return defence.lightningResistant;
+
+         default:
+            Debug.LogWarning($"Stat Type: {type} not implemented yet");
+            return null;
+      }
+   }
+
+   [ContextMenu(("Update Default Setup"))]
+   public void ApplyDefaultStatSetup()
+   {
+      if (defaultStatSetup == null)
+      {
+         Debug.LogWarning("No default setup assigned");
+         return;
+      }
+      
+      resources.maxHealth.SetBaseValue(defaultStatSetup.maxHealth);
+      resources.healthRegeneration.SetBaseValue(defaultStatSetup.healthRegeneration);
+      
+      major.strength.SetBaseValue(defaultStatSetup.strength);
+      major.agility.SetBaseValue(defaultStatSetup.agility);
+      major.intelligence.SetBaseValue(defaultStatSetup.intelligence);
+      major.vitality.SetBaseValue(defaultStatSetup.vitality);
+      
+      offence.attackSpeed.SetBaseValue(defaultStatSetup.attackSpeed);
+      offence.damage.SetBaseValue(defaultStatSetup.damage);
+      offence.criticalPower.SetBaseValue(defaultStatSetup.criticalPower);
+      offence.criticalChance.SetBaseValue(defaultStatSetup.criticalChance);
+      offence.armourReduction.SetBaseValue(defaultStatSetup.armourReduction);
+      
+      offence.fireDamage.SetBaseValue(defaultStatSetup.fireDamage);
+      offence.iceDamage.SetBaseValue(defaultStatSetup.iceDamage);
+      offence.lightningDamage.SetBaseValue(defaultStatSetup.lightningDamage);
+      
+      defence.armour.SetBaseValue(defaultStatSetup.armour);
+      defence.evasion.SetBaseValue(defaultStatSetup.evasion);
+      
+      defence.fireResistant.SetBaseValue(defaultStatSetup.fireResistant);
+      defence.iceResistant.SetBaseValue(defaultStatSetup.iceResistant);
+      defence.lightningResistant.SetBaseValue(defaultStatSetup.lightningResistant);
+      
+   }
    
 }

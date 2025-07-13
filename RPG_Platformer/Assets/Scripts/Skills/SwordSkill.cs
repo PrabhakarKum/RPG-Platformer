@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
-
 public enum SwordType
 {
    Regular,
@@ -9,7 +7,7 @@ public enum SwordType
    Spinning
    
 }
-public class SwordSkill : Skill
+public class SwordSkill : Skill_Base
 {
    public SwordType swordType = SwordType.Regular;
    
@@ -56,12 +54,18 @@ public class SwordSkill : Skill
 
    private void SetupGravity()
    {
-      if(swordType == SwordType.Bounce)
-         swordGravity = bounceGravity;
-      else if(swordType == SwordType.Pierce)
-         swordGravity = pierceGravity;
-      else if(swordType == SwordType.Spinning)
-         swordGravity = spinGravity;
+      switch (swordType)
+      {
+         case SwordType.Bounce:
+            swordGravity = bounceGravity;
+            break;
+         case SwordType.Pierce:
+            swordGravity = pierceGravity;
+            break;
+         case SwordType.Spinning:
+            swordGravity = spinGravity;
+            break;
+      }
    }
 
    protected override void Update()
@@ -80,19 +84,20 @@ public class SwordSkill : Skill
    {
       finalDirection = new Vector2(AimDirection().normalized.x * launchForce.x, AimDirection().normalized.y* launchForce.y);
       GameObject newSword = Instantiate(swordPrefab, player.transform.position, Quaternion.identity);
+      player.hasSword = false;
       SwordSkillController newSwordController =  newSword.GetComponent<SwordSkillController>();
 
-      if (swordType == SwordType.Bounce)
+      switch (swordType)
       {
-         newSwordController.SetupBounce(true, bounceAmount, bouncingSpeed);
-      }
-      else if (swordType == SwordType.Pierce)
-      {
-         newSwordController.SetupPierce(pierceAmount);
-      }
-      else if (swordType == SwordType.Spinning)
-      {
-         newSwordController.SetupSpinning(true, maxTravelDistance, spinDuration, hitCooldown);
+         case SwordType.Bounce:
+            newSwordController.SetupBounce(true, bounceAmount, bouncingSpeed);
+            break;
+         case SwordType.Pierce:
+            newSwordController.SetupPierce(pierceAmount);
+            break;
+         case SwordType.Spinning:
+            newSwordController.SetupSpinning(true, maxTravelDistance, spinDuration, hitCooldown);
+            break;
       }
       
       newSwordController.SetupSword(finalDirection, swordGravity, player, freezeTimeDuration, returnSpeed);
@@ -103,7 +108,8 @@ public class SwordSkill : Skill
    }
 
    #region Aim Sword
-   public Vector2 AimDirection()
+
+   private Vector2 AimDirection()
    {
       Vector2 playerPosition = player.transform.position;
       Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -112,13 +118,13 @@ public class SwordSkill : Skill
    }
    public void DotsActive(bool _isActive)
    {
-      for(int i = 0; i < dots.Length; i++)
-         dots[i].SetActive(_isActive);
+      foreach (var t in dots)
+         t.SetActive(_isActive);
    }
    private void GenerateDots()
    {
       dots = new GameObject[numberOfDots];
-      for (int i = 0; i < numberOfDots; i++)
+      for (var i = 0; i < numberOfDots; i++)
       {
          dots[i] = Instantiate(aimDotPrefab, player.transform.position, Quaternion.identity, dotParent);
          dots[i].SetActive(false);
@@ -131,8 +137,6 @@ public class SwordSkill : Skill
         AimDirection().normalized.y * launchForce.y)* t + 0.5f * (Physics2D.gravity * swordGravity) * (t*t);
          position.x = Mathf.Clamp(position.x, -10f + player.transform.position.x, 10f+  player.transform.position.x);
          position.y = Mathf.Clamp(position.y, -10f + player.transform.position.y, 10f +  player.transform.position.y);
-        // Debug.Log("Player position" + player.transform.position + "dots position" + position);
-        // Debug.Log("---------------------");
      return position;
    }
    #endregion

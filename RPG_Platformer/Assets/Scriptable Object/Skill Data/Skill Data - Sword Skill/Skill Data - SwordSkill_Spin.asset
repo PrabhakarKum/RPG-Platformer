@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5ef1b46c075bbe4da826416dcfd620e, type: 3}
+  m_Name: Skill Data - SwordSkill_Spin
+  m_EditorClassIdentifier: 
+  icon: {fileID: 1769610329, guid: d4745ecc11c66ed4d9d55b2a27e5fab2, type: 3}
+  displayName: Spin Reaver
+  description: sword will spin at one point and damage enemies
+  cost: 4
+  unlockedByDefault: 0
+  skillType: 2
+  upgradeData:
+    upgradeType: 12
+    cooldown: 4
+    damageScaleData:
+      physical: 1
+      elemental: 1
+      chillDuration: 3
+      chillSlowMultiplier: 0.2
+      burnDuration: 3
+      burnDamageScale: 1
+      shockDuration: 3
+      shockDamageScale: 1
+      shockCharge: 0.4

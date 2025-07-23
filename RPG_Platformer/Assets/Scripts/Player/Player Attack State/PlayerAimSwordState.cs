@@ -30,11 +30,13 @@ public class PlayerAimSwordState : PlayerState
         }
         
         DirectionToMouse();
+        player.skillManager.swordSkill.PredictTrajectory();
     }
 
     public override void Exit()
     {
         base.Exit();
+        player.skillManager.swordSkill.DotsActive(false);
         player.StartCoroutine("BusyFor", 0.2f);
     }
     

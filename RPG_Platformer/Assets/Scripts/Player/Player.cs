@@ -5,56 +5,59 @@ using UnityEngine.Assertions.Comparers;
 
 public class Player : Entity, IDamageable
 {
-    [Header("Attack Details")]
-    public bool hasSword = true;
-    public Vector2[] attackMovement;
-    public float counterAttackDuration = 0.2f; 
-    public bool isBusy {get; private set;}
-
-    
     public static event Action OnPlayerDeath;
-    
-    
-    #region Information
-    [Header("Movement Info")]
-    public float moveSpeed = 10f;
+
+    [Header("Attack Details")] public bool hasSword = true;
+    public Vector2[] attackMovement;
+    public float counterAttackDuration = 0.2f;
+    public bool isBusy { get; private set; }
+
+    [Header("Domain Expansion Details")] 
+    public float riseSpeed = 10;
+    public float riseMaxDistance = 0.5f;
+
+
+   
+
+    [Header("Movement Info")] public float moveSpeed = 10f;
     public float swordReturnImpact = 1.5f;
-    
-    [Header("Dash Info")]
-    public float dashSpeed = 10f;
+
+    [Header("Dash Info")] public float dashSpeed = 10f;
     public float dashDuration = 0.5f;
-    public float dashDirection {get; private set;}
-    
-    [Header("Jump Info")]
+    public float dashDirection { get; private set; }
+
+    [Header("Jump Info")] 
     public float jumpForce = 10f;
     public int maxJumps = 2;
     public int currentJumpCount = 0;
     public bool CanJump() => currentJumpCount < maxJumps;
-    
+
+  
+
+    #region Components
+
+    public SkillManager skillManager { get; private set; }
+    public UI_Manager uiManager { get; private set; }
+    public Entity_StatusHandler statusHandler { get; private set; }
+    public GameObject sword { get; private set; }
+
     #endregion
-    
-   #region Components
-   public SkillManager skillManager {get; private set;}
-   public UI_Manager uiManager {get; private set;}
-   public Entity_StatusHandler statusHandler {get; private set;}
-   public GameObject sword{get; private set;}
-   
-   #endregion
-    
+
     #region States
-    public PlayerStateMachine playerStateMachine {get; private set;}
-    public PlayerIdleState idleState {get; private set;}
-    public PlayerMoveState moveState {get; private set;}
-    public PlayerJumpState jumpState {get; private set;}
-    public PlayerAirState airState {get; private set;}
-    public PlayerDashState dashState {get; private set;}
-    public PlayerWallSlideState wallSlideState {get; private set;}
-    public PlayerWallJumpState wallJumpState {get; private set;}
-    public PlayerPrimaryAttackState primaryAttackState {get; private set;}
-    public PlayerCounterAttackState counterAttackState{get; private set;}
-    public PlayerAimSwordState aimSwordState {get; private set;}
-    public PlayerCatchSwordState catchSwordState {get; private set;}
-    public PlayerBlackHoleState blackHoleState{get; private set;}
+
+    public PlayerStateMachine playerStateMachine { get; private set; }
+    public PlayerIdleState idleState { get; private set; }
+    public PlayerMoveState moveState { get; private set; }
+    public PlayerJumpState jumpState { get; private set; }
+    public PlayerAirState airState { get; private set; }
+    public PlayerDashState dashState { get; private set; }
+    public PlayerWallSlideState wallSlideState { get; private set; }
+    public PlayerWallJumpState wallJumpState { get; private set; }
+    public PlayerPrimaryAttackState primaryAttackState { get; private set; }
+    public PlayerCounterAttackState counterAttackState { get; private set; }
+    public PlayerAimSwordState aimSwordState { get; private set; }
+    public PlayerCatchSwordState catchSwordState { get; private set; }
+    public PlayerDomainExpansionState domainExpansionState { get; private set;}
     public PlayerDeathState deathState {get; private set;}
     
     #endregion
@@ -82,7 +85,7 @@ public class Player : Entity, IDamageable
         aimSwordState      = new PlayerAimSwordState(this, playerStateMachine, "AimSword");
         catchSwordState    = new PlayerCatchSwordState(this, playerStateMachine, "CatchSword");
         
-        blackHoleState = new PlayerBlackHoleState(this, playerStateMachine, "Jump");
+        domainExpansionState = new PlayerDomainExpansionState(this, playerStateMachine, "Jump");
     }
 
     protected override void Start()
@@ -95,8 +98,11 @@ public class Player : Entity, IDamageable
     protected override void Update()
     {
         base.Update();
+        
         playerStateMachine.currentState.Update();
         CheckForDashInput();
+        CheckForDomainExpansionInput();
+        
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             OpenSkillTree();
@@ -146,8 +152,12 @@ public class Player : Entity, IDamageable
         if(isDead)
             return;
         
+        if(playerStateMachine.currentState == domainExpansionState)
+            return;
+        
         if (IsWallDetected())
             return;
+        
         
         if (Input.GetKeyDown(KeyCode.LeftShift) && SkillManager.Instance.dashSkill.CanUseSkill())
         {
@@ -157,6 +167,20 @@ public class Player : Entity, IDamageable
                 dashDirection = facingDirection;
             }
             playerStateMachine.ChangeState(dashState);
+        }
+    }
+
+    private void CheckForDomainExpansionInput()
+    {
+        if (Input.GetKeyDown(KeyCode.R) && SkillManager.Instance.domainExpansion.CanUseSkill())
+        {
+            if(isDead)
+                return;
+            
+            if (SkillManager.Instance.domainExpansion.InstantDomain())
+                SkillManager.Instance.domainExpansion.CreateDomain();
+            else
+                playerStateMachine.ChangeState(domainExpansionState);
         }
     }
     

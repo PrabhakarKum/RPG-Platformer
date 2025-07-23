@@ -6,6 +6,7 @@ using Vector2 = System.Numerics.Vector2;
 public class SkeletonBattleState : EnemyState
 {
     private Transform player;
+    private Transform lastTarget;
     private EnemySkeleton enemySkeleton;
     private int moveDir;
     public SkeletonBattleState(Enemy _enemyBase, EnemyStateMachine _enemyStateMachine, string _animBoolName, EnemySkeleton _enemySkeleton) : base(_enemySkeleton, _enemyStateMachine, _animBoolName)
@@ -19,6 +20,7 @@ public class SkeletonBattleState : EnemyState
 
         if (enemySkeleton.IsPlayerDetected())
         {
+            UpdateTargetIfNeeded();
             stateTimer = enemySkeleton.battleTime;
             if (enemySkeleton.IsPlayerDetected().distance < enemySkeleton.attackDistance)
             {
@@ -46,7 +48,7 @@ public class SkeletonBattleState : EnemyState
         }
         
         
-        enemySkeleton.SetVelocity(enemySkeleton.moveSpeed * moveDir, enemySkeleton.rigidBody.velocity.y);
+        enemySkeleton.SetVelocity(enemySkeleton.GetBattleMoveSpeed() * moveDir, enemySkeleton.rigidBody.velocity.y);
     }
 
     public override void Enter()
@@ -68,5 +70,18 @@ public class SkeletonBattleState : EnemyState
             return true;
         }
         return false;
+    }
+
+    private void UpdateTargetIfNeeded()
+    {
+        if(enemySkeleton.IsPlayerDetected() == false)
+            return;
+        
+        Transform newTarget = enemySkeleton.IsPlayerDetected().transform;
+        if (newTarget != lastTarget)
+        {
+            lastTarget = newTarget;
+            player = newTarget;
+        }
     }
 }

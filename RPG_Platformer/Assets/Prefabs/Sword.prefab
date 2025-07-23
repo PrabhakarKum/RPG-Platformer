@@ -109,8 +109,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ca6ba2bc7095b4380ff3a4f0a1a740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  returnSpeed: 12
-  bouncingSpeed: 20
+  onHitVFX: {fileID: 7673702199922248069, guid: 61f42f760570fd64eb683c9278f99c62, type: 3}
+  whatIsEnemy:
+    serializedVersion: 2
+    m_Bits: 256
+  targetCheck: {fileID: 8662899539214347386}
+  checkRadius: 0.2
 --- !u!1 &6708790622392101880
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,7 +188,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -390533345
   m_SortingLayer: 2
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 0c0148a0180b88244a0678c5a5a5c4b9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

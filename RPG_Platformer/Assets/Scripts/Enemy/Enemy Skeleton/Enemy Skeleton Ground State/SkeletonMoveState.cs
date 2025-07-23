@@ -20,7 +20,7 @@ public class SkeletonMoveState : SkeletonGroundState
     {
         base.Update();
 
-        enemySkeleton.SetVelocity(enemySkeleton.moveSpeed * enemySkeleton.facingDirection,
+        enemySkeleton.SetVelocity(enemySkeleton.GetMoveSpeed() * enemySkeleton.facingDirection,
             enemySkeleton.rigidBody.velocity.y);
 
         if (enemySkeleton.IsWallDetected() || !enemySkeleton.IsGroundDetected())

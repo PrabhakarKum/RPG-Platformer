@@ -25,6 +25,14 @@ public class Entity_StatusHandler : MonoBehaviour
       _entityStats = GetComponent<Entity_Stats>();
    }
 
+   public void RemoveAllNegativeEffects()
+   {
+      StopAllCoroutines();
+      _currentEffect = ElementType.None;
+      _entityVFX.StopAllVFX();
+      
+   }
+
    public void ApplyStatusEffect(ElementType element, ElementalEffectData effectData)
    {
       switch (element)
@@ -41,7 +49,7 @@ public class Entity_StatusHandler : MonoBehaviour
       }
    }
 
-   public void ApplyChillEffect(float duration, float slowMultiplier)
+   private void ApplyChillEffect(float duration, float slowMultiplier)
    {
       var iceResistance = _entityStats.GetElementalResistance(ElementType.Ice);
       var finalDuration = duration * (1 - iceResistance);
@@ -58,8 +66,8 @@ public class Entity_StatusHandler : MonoBehaviour
       _currentEffect = ElementType.None;
 
    }
-   
-   public void ApplyBurnEffect(float duration, float fireDamage)
+
+   private void ApplyBurnEffect(float duration, float fireDamage)
    {
       var fireResistance = _entityStats.GetElementalResistance(ElementType.Fire);
       var finalDamage = fireDamage * (1 - fireResistance);
@@ -86,7 +94,8 @@ public class Entity_StatusHandler : MonoBehaviour
       _currentEffect = ElementType.None;
 
    }
-   public void ApplyLightningEffect(float duration, float lightningDamage, float charge)
+
+   private void ApplyLightningEffect(float duration, float lightningDamage, float charge)
    {
       var lightningResistance = _entityStats.GetElementalResistance(ElementType.Lightning);
       var finalCharge = charge * (1 - lightningResistance);
@@ -126,11 +135,10 @@ public class Entity_StatusHandler : MonoBehaviour
       _entity.ReduceHp(lightningDamage);
    }
 
-   public bool CanBeApplied(ElementType element)
+   private bool CanBeApplied(ElementType element)
    {
       if (element == ElementType.Lightning && _currentEffect == ElementType.Lightning)
          return true;
-      
       
       return _currentEffect == ElementType.None;
    }

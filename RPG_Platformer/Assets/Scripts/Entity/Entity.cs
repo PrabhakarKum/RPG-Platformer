@@ -22,28 +22,29 @@ public class Entity : MonoBehaviour
     public float attackCheckRadius;
     [SerializeField] protected Transform groundCheck;
     [SerializeField] protected float groundCheckDistance;
-    [SerializeField] protected LayerMask groundLayer;
+    public LayerMask whatIsGround;
     [SerializeField] protected Transform wallCheck;
     [SerializeField] protected float wallCheckDistance;
     
     
     [Header("Health & HealthRegen Info")]
-    [SerializeField] protected float currentHealth;
-    [SerializeField] protected bool isDead;
     [SerializeField] private float regenInterval = 1f;
     [SerializeField] private bool canRegenerateHealth = true;
+    [SerializeField] private float currentHealth;
+    public bool isDead { get; private set; }
+    public bool canTakeDamage { get; private set; } = true;
     
     [Header("Flip Info")]
     public int facingDirection  = 1;
     private bool _facingRight = true;
 
-    private Coroutine _slowDownCo;
+    private Coroutine slowDownCoroutine;
     
     #region Components
     
     private Slider _healthBar;
     private SpriteRenderer _spriteRenderer;
-    public Entity_Stats entityStats;
+    public Entity_Stats entityStats { get; private set; }
     public Animator animator {get; private set;}
     public Rigidbody2D rigidBody {get; private set;}
     public Entity_VFX entityVFX {get; private set;}
@@ -60,10 +61,18 @@ public class Entity : MonoBehaviour
         _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         entityStats = GetComponent<Entity_Stats>();
         
-        currentHealth = entityStats.GetMaxHealth();
-        UpdateHealthBar();
+        SetupHealth();
         
-        InvokeRepeating(nameof(RegenerateHealth), 0, regenInterval);
+    }
+
+    private void SetupHealth()
+    {
+        if (entityStats != null)
+        {
+            currentHealth = entityStats.GetMaxHealth();
+            UpdateHealthBar();
+            InvokeRepeating(nameof(RegenerateHealth), 0, regenInterval);
+        }
     }
 
     protected virtual void Start()
@@ -76,32 +85,34 @@ public class Entity : MonoBehaviour
         
     }
 
-    public virtual void TakeDamage(float damage, float elementalDamage, ElementType element, Transform target, Transform damageDealer, bool isCritical)
+    public virtual bool TakeDamage(float damage, float elementalDamage, ElementType element, Transform target, Transform damageDealer, bool isCritical)
     {
-        if(isDead)
-            return;
+        if(isDead || canTakeDamage == false)
+            return false;
 
         if (AttackEvaded())
         {
             Debug.Log($"{gameObject.name} attack evaded!!");
-            return;
+            return false;
         }
-        
+
         var attackerStats = damageDealer.GetComponent<Entity_Stats>();
         var armourReduction = attackerStats != null ? attackerStats.GetArmourReduction() : 0;
-        
-        var mitigation = entityStats.GetArmourMitigation(armourReduction);
+        var mitigation =  entityStats != null ?entityStats.GetArmourMitigation(armourReduction) : 0;
+        var resistance = entityStats != null ? entityStats.GetElementalResistance(element) : 0;
         var physicalDamageTaken = damage * (1 - mitigation);
 
-        var resistance = entityStats.GetElementalResistance(element);
         var elementalDamageTaken = elementalDamage * (1 - resistance);
         
         
         PlayOnHitFeedback(target, element, isCritical);
         StartCoroutine(HitKnockBack(physicalDamageTaken,damageDealer));
         ReduceHp(physicalDamageTaken + elementalDamageTaken);
+        
+        return true;
     }
 
+    public void SetCanTakeDamage(bool _canTakeDamage) => canTakeDamage = _canTakeDamage;
     private void PlayOnHitFeedback(Transform target, ElementType element, bool isCritical)
     {
         entityVFX.UpdateOnHitColor(element);
@@ -142,7 +153,7 @@ public class Entity : MonoBehaviour
         IncreaseHealth(regenerateAmount);
         
     }
-    private void IncreaseHealth(float healAmount)
+    public void IncreaseHealth(float healAmount)
     {
         if(isDead)
             return;
@@ -154,7 +165,7 @@ public class Entity : MonoBehaviour
         UpdateHealthBar();
     }
 
-    private void Die()
+    protected virtual void Die()
     {
         isDead = true;
         EntityDeath();
@@ -182,7 +193,14 @@ public class Entity : MonoBehaviour
         return knockBack;
     }
 
-    private bool IsHeavyDamage(float damage) => damage / entityStats.GetMaxHealth() > heavyDamageThreshold;
+    private bool IsHeavyDamage(float damage)
+    {
+        if (entityStats != null)
+            return false;
+        
+        return damage / entityStats.GetMaxHealth() > heavyDamageThreshold;
+
+    }
     
     private bool AttackEvaded() => Random.Range(0, 100) < entityStats.GetEvasion();
 
@@ -191,23 +209,33 @@ public class Entity : MonoBehaviour
         
     }
 
-    public void SlowDownEntity(float duration, float slowMultiplier)
+    public void SlowDownEntity(float duration, float slowMultiplier, bool canOverriddeEffect = false)
     {
-        if(_slowDownCo != null)
-            StopCoroutine(_slowDownCo);
+        if (slowDownCoroutine != null)
+        {
+            if(canOverriddeEffect)
+                StopCoroutine(slowDownCoroutine);
+            else
+                return;
+        }
 
-        _slowDownCo = StartCoroutine(SlowDownEntityCoroutine(duration, slowMultiplier));
+        slowDownCoroutine = StartCoroutine(SlowDownEntityCoroutine(duration, slowMultiplier));
     }
 
     protected virtual IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
     {
         yield return null;
     }
+
+    public virtual void StopSlowDown()
+    {
+        slowDownCoroutine = null;
+    }
     
     #region Collision
    
-    public bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
-    public bool IsWallDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDirection, wallCheckDistance, groundLayer);
+    public bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
+    public bool IsWallDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDirection, wallCheckDistance, whatIsGround);
     protected virtual void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -268,5 +296,10 @@ public class Entity : MonoBehaviour
             _spriteRenderer.color = Color.clear;
         else
             _spriteRenderer.color = Color.white;
+    }
+    
+    public void CloneDeath()
+    {
+        
     }
 }

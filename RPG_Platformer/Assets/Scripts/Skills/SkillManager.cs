@@ -7,9 +7,11 @@ public class SkillManager : MonoBehaviour
     public CloneSkill cloneSkill {get; private set;}
     
     public SwordSkill swordSkill {get; private set;}
-    
-    public BlackHoleSkill blackHoleSkill {get; private set;}
     public CrystalSkill crystalSkill {get; private set;}
+
+    private Skill_Base[] allSkills;
+    
+    public DomainExpansion domainExpansion { get; private set; }
 
     private void Awake()
     {
@@ -24,8 +26,16 @@ public class SkillManager : MonoBehaviour
         dashSkill = GetComponent<DashSkill>();
         cloneSkill = GetComponent<CloneSkill>();
         swordSkill = GetComponent<SwordSkill>();
-        blackHoleSkill = GetComponent<BlackHoleSkill>();
+        domainExpansion = GetComponent<DomainExpansion>();
         crystalSkill = GetComponent<CrystalSkill>();
+
+        allSkills = GetComponents<Skill_Base>();
+    }
+
+    public void ReduceAllSkillCooldownBy(float amount)
+    {
+        foreach (var skill in allSkills)
+            skill.ReduceCooldownBy(amount);
     }
 
     public Skill_Base GetSkillByType(SkillType type)
@@ -37,7 +47,15 @@ public class SkillManager : MonoBehaviour
             
             case SkillType.TimeCrystalSkill:
                 return crystalSkill;
+
+            case SkillType.SwordSkill:
+                return swordSkill;
             
+            case SkillType.CloneSkill:
+                return cloneSkill;
+            
+            case SkillType.DomainExpansionSkill:
+                return domainExpansion;
             default: 
                 Debug.Log($"Skill type {type} not found");
                 return null;

@@ -67,6 +67,22 @@ public class CrystalSkill : Skill_Base
             HandleCrystalMoving();
         
     }
+    
+    private void CreateCrystal()
+    {
+        var crystal = Instantiate(crystalPrefab, player.transform.position, Quaternion.identity);
+        _currentCrystal = crystal.GetComponent<SkillObject_Crystal>();
+        _currentCrystal.SetupCrystal(this);
+    }
+
+    public void CreateRawCrystal(Transform target = null, bool crystalCanMove = false)
+    {
+        var canMove = crystalCanMove == false ? 
+            Unlocked(SkillUpgradeType.Crystal_MoveToEnemy) || Unlocked(SkillUpgradeType.Crystal_MultiCast) : crystalCanMove;
+        
+        var crystal = Instantiate(crystalPrefab, player.transform.position, Quaternion.identity);
+        crystal.GetComponent<SkillObject_Crystal>().SetupCrystal(this, detonateTime, canMove, crystalMoveSpeed, target);
+    }
 
     private void HandleCrystalRewind()
     {
@@ -141,21 +157,7 @@ public class CrystalSkill : Skill_Base
         CreateCrystal();
         _currentCrystal.MoveTowardsClosestTarget(crystalMoveSpeed);
     }
-    private void CreateCrystal()
-    {
-        var detonationTime = GetDetonateTime();
-        
-        var crystal = Instantiate(crystalPrefab, player.transform.position, Quaternion.identity);
-        _currentCrystal = crystal.GetComponent<SkillObject_Crystal>();
-        _currentCrystal.SetupCrystal(this);
-    }
-
-    public void CreateRawCrystal()
-    {
-        var canMove = Unlocked(SkillUpgradeType.Crystal_MoveToEnemy) || Unlocked(SkillUpgradeType.Crystal_MultiCast);
-        var crystal = Instantiate(crystalPrefab, player.transform.position, Quaternion.identity);
-        crystal.GetComponent<SkillObject_Crystal>().SetupCrystal(this, detonateTime, canMove, crystalMoveSpeed );
-    }
+    
 
     public float GetDetonateTime()
     {

@@ -71,10 +71,10 @@ public class Entity_VFX : MonoBehaviour
         }
     }
     
-    private IEnumerator PlayStatusVFXCoroutine(float duration, Color effectColor, SpriteRenderer sprite)
+    private IEnumerator PlayStatusVFXCoroutine(float duration, Color effectColor, SpriteRenderer spriteIcon)
     {
 
-        if (sprite == null)
+        if (spriteIcon == null)
             yield break;
         
         const float tickInterval = 0.2f;
@@ -85,7 +85,7 @@ public class Entity_VFX : MonoBehaviour
         var toggle = false;
 
         
-        sprite.gameObject.SetActive(true);
+        spriteIcon.gameObject.SetActive(true);
         while(timeHasPassed < duration)
         {
             _spriteRenderer.color = toggle ? lightColor : darkColor;
@@ -95,7 +95,7 @@ public class Entity_VFX : MonoBehaviour
         }
 
         _spriteRenderer.color = Color.white;
-        sprite.gameObject.SetActive(false);
+        spriteIcon.gameObject.SetActive(false);
     }
 
     public void StopAllVFX()

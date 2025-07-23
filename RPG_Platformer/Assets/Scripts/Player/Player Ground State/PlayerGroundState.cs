@@ -18,12 +18,7 @@ public class PlayerGroundState : PlayerState
     {
         base.Update();
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            playerStateMachine.ChangeState(player.blackHoleState);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse1) && HasNoSword())
+        if (Input.GetKeyDown(KeyCode.Mouse1) && HasNoSword() && SkillManager.Instance.swordSkill.CanUseSkill())
         {
             playerStateMachine.ChangeState(player.aimSwordState);
         }
@@ -52,7 +47,7 @@ public class PlayerGroundState : PlayerState
             return true;
         }
         
-        player.sword.GetComponent<SwordSkillController>().ReturnSword();
+        player.sword.GetComponent<SkillObject_Sword>().ReturnSword();
         return false;
     }
 }

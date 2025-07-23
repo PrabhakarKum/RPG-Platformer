@@ -7,6 +7,7 @@ public enum SkillUpgradeType
     None,
     
     // -------- Dash Tree ------------
+    
     Dash, // dash to avoid damage
     Dash_CloneOnStart, // Creates a clone when dash Starts
     Dash_CloneOnStartAndArrival, // Creates a clone when dash Starts and ends
@@ -23,9 +24,28 @@ public enum SkillUpgradeType
     
     
     // -------- Sword Tree ----------
+   
     SwordThrow, // you can throw the sword to damage enemies from range
     SwordThrow_Spin, // your sword will spin at one point and damage enemies
     SwordThrow_Pierce, // Pierce sword will pierce N targets
     SwordThrow_Bounce, // Bounce sword will bounce between enemies
+    
+    // -------- Clone Tree ---------
+    
+    CloneSkill, // Create a clone of a player. It can take damage from enemies
+    CloneSkill_SingleAttack, // Can perform a single attack
+    CloneSkill_MultiAttack, // can perform a multiple attack
+    CloneSkill_ChanceToDuplicate, // has a chance to create another time clone when attacks
+    
+    CloneSkill_HealWish, // when clone dies it creates a wisp that flies towards the player to heal it
+    CloneSkill_CleanseWisp, // wisp will now remove negative effects from player
+    CloneSkill_CooldownWisp, // wisp will reduce cooldown for all skills by n seconds
+    
+   // ------------- Domain Expansion ----------------
+   Domain_SlowingDown, // Create an area in which you slow down enemies by 90 - 100%. You can freely move and fight
+   Domain_CloneSpam, // You can no longer move, but you can spam enemy with clone ability
+   Domain_CrystalSpam // You can no longer move, but you can spam enemy with crystal ability
+   
+    
     
 }

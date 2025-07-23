@@ -7,7 +7,8 @@ public enum SkillType
     DashSkill,
     TimeCrystalSkill,
     SwordSkill,
-    BlackHoleSkill
+    CloneSkill,
+    DomainExpansionSkill,
     
     
 }

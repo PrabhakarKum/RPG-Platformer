@@ -18,7 +18,7 @@ TagManager:
   - IgnoreEnemy
   - Collectible
   - VFX
-  - Object_Buff
+  - PlayerPickups
   - 
   - 
   - 

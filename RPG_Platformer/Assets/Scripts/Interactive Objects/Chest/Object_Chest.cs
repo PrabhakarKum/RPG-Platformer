@@ -7,7 +7,7 @@ public class Object_Chest : MonoBehaviour, IDamageable
     private Entity_VFX entityVFX => GetComponent<Entity_VFX>();
 
     [SerializeField] private Vector2 knockBack;
-    public void TakeDamage(float damage, float elementalDamage, ElementType elementType, Transform position, Transform damageDealer, bool isCritical)
+    public bool TakeDamage(float damage, float elementalDamage, ElementType elementType, Transform position, Transform damageDealer, bool isCritical)
     {
         entityVFX.StartCoroutine(entityVFX.FlashFX());
         _animator.SetBool("chestOpen", true);
@@ -15,6 +15,6 @@ public class Object_Chest : MonoBehaviour, IDamageable
         _rigidbody.angularVelocity = Random.Range(-200f, 200f);
         
         //Drop Items
-
+        return true;
     }
 }

@@ -8,8 +8,8 @@ public class Enemy : Entity, IDamageable
     
     [Header("Move Info")] 
     public float moveSpeed;
+    public float battleMoveSpeed;
     public float idleTime;
-    private float defaultMoveSpeed;
 
     [Header("Attack Info")] 
     public float attackDistance;
@@ -27,12 +27,13 @@ public class Enemy : Entity, IDamageable
     
 
     protected EnemyStateMachine enemyStateMachine { get; private set; }
+    private float activeSlowMultiplier;
     
     protected override void Awake()
     {
         base.Awake();
         enemyStateMachine = new EnemyStateMachine();
-        defaultMoveSpeed = moveSpeed;
+        activeSlowMultiplier = 1f;
     }
 
     protected override void Update()
@@ -41,31 +42,39 @@ public class Enemy : Entity, IDamageable
         enemyStateMachine.currentState.Update();
     }
 
+    public float GetMoveSpeed() => moveSpeed * activeSlowMultiplier * Time.deltaTime;
+
+    public float GetBattleMoveSpeed() => battleMoveSpeed * activeSlowMultiplier * Time.deltaTime;
+
     protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
     {
-        var originalMoveSpeed = moveSpeed;
-        var originalAnimSpeed = animator.speed;
-        var speedMultiplier = 1 - slowMultiplier;
         
-        Debug.Log("enemy speed multiplier: "+ speedMultiplier);
-        moveSpeed *= speedMultiplier;
-        animator.speed *= speedMultiplier;
+        activeSlowMultiplier = 1 - slowMultiplier;
+        
+        
+        animator.speed *= activeSlowMultiplier;
         
         yield return new WaitForSeconds(duration);
-
-        moveSpeed = originalMoveSpeed;
-        animator.speed = originalAnimSpeed;
+        StopSlowDown();
     }
-    public void FreezeTime(bool _timeFrozen)
+
+    public override void StopSlowDown()
+    {
+        activeSlowMultiplier = 1;
+        animator.speed = 1;
+        base.StopSlowDown();
+    }
+
+    private void FreezeTime(bool _timeFrozen)
     {
         if (_timeFrozen)
         {
-            moveSpeed = 0;
+            activeSlowMultiplier = 0;
             animator.speed = 0;
         }
         else
         {
-            moveSpeed = defaultMoveSpeed;
+            activeSlowMultiplier = 1;
             animator.speed = 1;
         }
     }
@@ -117,6 +126,17 @@ public class Enemy : Entity, IDamageable
     {
         return isDead;
     }
-    
-    
+
+    public override bool TakeDamage(float damage, float elementalDamage, ElementType element, Transform target, Transform damageDealer, bool isCritical)
+    {
+        if (canTakeDamage == false)
+            return false;
+
+        var wasHit =  base.TakeDamage(damage, elementalDamage, element, target, damageDealer, isCritical);
+
+        if (wasHit == false)
+            return false;
+        
+        return true;
+    }
 }

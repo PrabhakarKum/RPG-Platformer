@@ -31,7 +31,7 @@ public class DashSkill : Skill_Base
 
         if (Unlocked(SkillUpgradeType.Dash_CloneOnStartAndArrival))
         {
-            //CreateClone(clonePosition, offset);
+            CreateClone(clonePosition, offset);
         }
             
 
@@ -39,8 +39,6 @@ public class DashSkill : Skill_Base
         {
             CreateShard();
         }
-            
-        
     }
 
     private void CreateShard()
@@ -50,8 +48,6 @@ public class DashSkill : Skill_Base
     
     private void CreateClone(Transform clonePosition, Vector3 offset)
     {
-        Debug.Log("Create Time Echo");
-        //SkillManager.Instance.cloneSkill.CreateClone(clonePosition, offset);
         skillManager.cloneSkill.CreateClone(clonePosition, offset);
     }
     

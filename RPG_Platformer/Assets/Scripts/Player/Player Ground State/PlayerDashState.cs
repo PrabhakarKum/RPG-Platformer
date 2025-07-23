@@ -13,10 +13,13 @@ public class PlayerDashState : PlayerState
         //player.skillManager.cloneSkill.CreateClone(player.transform, Vector2.zero);  // original
         player.skillManager.dashSkill.OnStartEffect(player.transform, Vector2.zero);
         stateTimer = player.dashDuration;
+        
+        player.SetCanTakeDamage(false);
     }
     public override void Exit()
     {
         base.Exit();
+        player.SetCanTakeDamage(true);
         player.skillManager.dashSkill.OnEndEffect(player.transform, Vector2.zero);
         player.SetVelocity(0, player.rigidBody.velocity.y);
     }

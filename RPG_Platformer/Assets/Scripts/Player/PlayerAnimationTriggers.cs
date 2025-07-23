@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class PlayerAnimationTriggers : MonoBehaviour
 {
-    public Player player;
+    private Player player;
     public DamageScaleData basicAttackScale;
     
     private Entity_Stats _stats;
+    [SerializeField] private LayerMask whatIsEnemy;
 
     private void Awake()
     {
+        player = GetComponentInParent<Player>();
         _stats = GetComponentInParent<Entity_Stats>();
     }
 
@@ -19,7 +21,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
 
     private void AttackTriggers()
     {
-        var colliders = Physics2D.OverlapCircleAll(player.attackCheck.position, player.attackCheckRadius);
+        var colliders = Physics2D.OverlapCircleAll(player.attackCheck.position, player.attackCheckRadius, whatIsEnemy);
         foreach (var target in colliders)
         {
             var damageable = target.GetComponent<IDamageable>();

@@ -171,12 +171,8 @@ MonoBehaviour:
   regenInterval: 1
   canRegenerateHealth: 1
   facingDirection: 1
-  defaultDuration: 3
-  chilledSlowMultiplier: 0.2
-  chargeBuildUp: 0.4
-  fireScale: 0.8
-  lightningScale: 2.5
   entityStats: {fileID: 0}
+  hasSword: 1
   attackMovement:
   - {x: 0.1, y: 0.25}
   - {x: 0.05, y: 0.07}
@@ -259,10 +255,10 @@ MonoBehaviour:
       modifiers: []
   offence:
     attackSpeed:
-      baseValue: 0
+      baseValue: 1
       modifiers: []
     damage:
-      baseValue: 10
+      baseValue: 100
       modifiers: []
     criticalPower:
       baseValue: 0
@@ -274,13 +270,13 @@ MonoBehaviour:
       baseValue: 0
       modifiers: []
     fireDamage:
-      baseValue: 0
+      baseValue: 30
       modifiers: []
     iceDamage:
-      baseValue: 0
+      baseValue: 20
       modifiers: []
     lightningDamage:
-      baseValue: 0
+      baseValue: 10
       modifiers: []
   major:
     strength:
@@ -643,6 +639,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 981996577498196630}
+  basicAttackScale:
+    physical: 1
+    elemental: 1
+    chillDuration: 3
+    chillSlowMultiplier: 0.1
+    burnDuration: 3
+    burnDamageScale: 1
+    shockDuration: 3
+    shockDamageScale: 1
+    shockCharge: 0.4
+  whatIsEnemy:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &6326137943168166588
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,7 +712,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 1209029207
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &1114013652098686634

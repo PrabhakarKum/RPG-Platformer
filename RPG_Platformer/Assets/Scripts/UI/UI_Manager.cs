@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class UI_Manager : MonoBehaviour
 {
-    public UI_SkillToolTip skillTooltip;
-    public UI_SkillTree skillTree;
+    public UI_SkillToolTip skillTooltip { get; private set; }
+    private UI_SkillTree skillTree;
 
     private bool _skillTreeEnabled;
     private void Awake()

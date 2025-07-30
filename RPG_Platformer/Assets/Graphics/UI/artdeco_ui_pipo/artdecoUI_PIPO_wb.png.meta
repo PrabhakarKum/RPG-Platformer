@@ -136,7 +136,49 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: artdecoUI_PIPO_wb_0
+      name: artdecoUI_PIPO_wb_1
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 673
+        width: 312
+        height: 196
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3d3831338c1a4f4a859d86d9cea104f
+      internalID: -1159760098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: artdecoUI_PIPO_wb_2
+      rect:
+        serializedVersion: 2
+        x: 1073
+        y: 583
+        width: 48
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0ba261716fc27a4894de2bf5fb1f7e7
+      internalID: 1916180152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: artdecoUI_PIPO_wb_3
       rect:
         serializedVersion: 2
         x: 27
@@ -150,29 +192,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 85c32d8497421d7428f84bcd9232ec07
-      internalID: -711238038
+      spriteID: f3ce5262813f5c540a1e3faade17db1f
+      internalID: -1051364818
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: artdecoUI_PIPO_wb_1
+      name: artdecoUI_PIPO_wb_4
       rect:
         serializedVersion: 2
-        x: 992
-        y: 712
-        width: 178
-        height: 155
+        x: 971
+        y: 446
+        width: 91
+        height: 85
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 8, y: 7, z: 7, w: 7}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f9b3c2b47effc94449de86d1ea25c510
-      internalID: -1159760098
+      spriteID: 1fd10cf84cfebf84c9e0ce9fb6b772d1
+      internalID: 683875598
       vertices: []
       indices: 
       edges: []
@@ -190,6 +232,9 @@ TextureImporter:
     nameFileIdTable:
       artdecoUI_PIPO_wb_0: -711238038
       artdecoUI_PIPO_wb_1: -1159760098
+      artdecoUI_PIPO_wb_2: 1916180152
+      artdecoUI_PIPO_wb_3: -1051364818
+      artdecoUI_PIPO_wb_4: 683875598
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

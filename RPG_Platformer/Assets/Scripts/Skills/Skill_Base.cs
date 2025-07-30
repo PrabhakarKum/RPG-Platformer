@@ -31,7 +31,7 @@ public class Skill_Base : MonoBehaviour
     }
     protected virtual void Start()
     {
-        player = PlayerManager.instance.player;
+        player = PlayerManager.Instance.player;
     }
 
     protected virtual void Update()

@@ -55,6 +55,10 @@ public class Entity_VFX : MonoBehaviour
         _spriteRenderer.material = _originalMaterial;
     }
 
+    public void CreateEffectOf(GameObject effect, Transform target)
+    {
+        Instantiate(effect, target.position, Quaternion.identity);
+    }
     public void PlayStatusVFX(float duration, ElementType element)
     {
         switch (element)

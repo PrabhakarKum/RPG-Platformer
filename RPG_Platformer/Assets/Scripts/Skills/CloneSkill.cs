@@ -23,7 +23,7 @@ public class CloneSkill : Skill_Base
 
     protected override void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             CreateClone(player.transform, Vector2.zero);
         }
@@ -31,21 +31,21 @@ public class CloneSkill : Skill_Base
     
     public void CreateClone(Transform clonePosition, Vector3 offset)
     {
-        //Vector3 position = clonePosition != Vector3.zero ? clonePosition : transform.position;
-        
         var clone = Instantiate(clonePrefab);
         clone.GetComponent<SkillObject_Clone>().SetupClone(this, clonePosition, offset);
     }
 
     public int GetMaxAttacks()
     {
-        if (upgradeType is SkillUpgradeType.CloneSkill_SingleAttack or SkillUpgradeType.CloneSkill_ChanceToDuplicate)
-            return 1;
-
-        if (upgradeType == SkillUpgradeType.CloneSkill_MultiAttack)
-            return maxAttacks;
-
-        return 0;
+        switch (upgradeType)
+        {
+            case SkillUpgradeType.CloneSkill_SingleAttack or SkillUpgradeType.CloneSkill_ChanceToDuplicate:
+                return 1;
+            case SkillUpgradeType.CloneSkill_MultiAttack:
+                return maxAttacks;
+            default:
+                return 0;
+        }
     }
 
     public float GetDuplicateChance()

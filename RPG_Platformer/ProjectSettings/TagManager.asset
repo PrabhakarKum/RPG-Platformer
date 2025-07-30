@@ -18,8 +18,8 @@ TagManager:
   - IgnoreEnemy
   - Collectible
   - VFX
-  - PlayerPickups
-  - 
+  - Player Interactable
+  - NPC
   - 
   - 
   - 
@@ -52,6 +52,9 @@ TagManager:
     locked: 0
   - name: Enemy
     uniqueID: 1551058917
+    locked: 0
+  - name: NPC
+    uniqueID: 3916628769
     locked: 0
   - name: Player
     uniqueID: 1209029207

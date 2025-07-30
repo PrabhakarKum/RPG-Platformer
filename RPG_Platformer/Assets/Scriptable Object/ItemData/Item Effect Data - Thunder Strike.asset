@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 212a6aa3709272347b98328585c52a14, type: 3}
+  m_Name: Item Effect Data - Thunder Strike
+  m_EditorClassIdentifier: 
+  effectDescription: You have 15% chance to create a thunder strike on hit.
+  effectData:
+    chillDuration: 0
+    chillSlowMultiplier: 0
+    burnDuration: 0
+    burnDamage: 0
+    shockDuration: 1.5
+    shockDamage: 10
+    shockCharge: 0
+  whatIsEnemy:
+    serializedVersion: 2
+    m_Bits: 256
+  percentThunderStrikeOnAttack: 0.15
+  lightningDamage: 100
+  thunderStrikeVFX: {fileID: 8533127427648567599, guid: e37c51dad3ac14a409b3e073a0cf4c68, type: 3}

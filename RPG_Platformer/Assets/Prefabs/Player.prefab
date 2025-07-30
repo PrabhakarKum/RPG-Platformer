@@ -43,12 +43,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3046450800593305512}
+  - component: {fileID: 6794197202097582407}
   - component: {fileID: 4018699654870749010}
   - component: {fileID: 6380647623307052467}
   - component: {fileID: 981996577498196630}
-  - component: {fileID: 591304276758979955}
-  - component: {fileID: 2566458416795803635}
+  - component: {fileID: 7692772637322243757}
   - component: {fileID: 73028276439291039}
+  - component: {fileID: 5363652272897827656}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -78,6 +79,41 @@ Transform:
   - {fileID: 7752114586610067204}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6794197202097582407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526478933161647253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80c8968ad30989345a2dec4e2a83b701, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxInventorySize: 10
+  itemList: []
+  equipList:
+  - slotType: 1
+    equippedItem:
+      itemData: {fileID: 0}
+      stackSize: 0
+      itemEffect: {fileID: 0}
+  - slotType: 2
+    equippedItem:
+      itemData: {fileID: 0}
+      stackSize: 0
+      itemEffect: {fileID: 0}
+  - slotType: 3
+    equippedItem:
+      itemData: {fileID: 0}
+      stackSize: 0
+      itemEffect: {fileID: 0}
+  - slotType: 3
+    equippedItem:
+      itemData: {fileID: 0}
+      stackSize: 0
+      itemEffect: {fileID: 0}
 --- !u!70 &4018699654870749010
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -161,23 +197,23 @@ MonoBehaviour:
   attackCheckRadius: 0.2
   groundCheck: {fileID: 1053461680509545070}
   groundCheckDistance: 0.1
-  groundLayer:
+  whatIsGround:
     serializedVersion: 2
     m_Bits: 64
   wallCheck: {fileID: 6965037655051881529}
   wallCheckDistance: 0.035
-  currentHealth: 0
-  isDead: 0
   regenInterval: 1
   canRegenerateHealth: 1
+  currentHealth: 0
   facingDirection: 1
-  entityStats: {fileID: 0}
   hasSword: 1
   attackMovement:
   - {x: 0.1, y: 0.25}
   - {x: 0.05, y: 0.07}
   - {x: 0.4, y: 0.35}
   counterAttackDuration: 0.2
+  riseSpeed: 10
+  riseMaxDistance: 1
   moveSpeed: 2
   swordReturnImpact: 1.5
   dashSpeed: 5
@@ -185,7 +221,8 @@ MonoBehaviour:
   jumpForce: 8
   maxJumps: 2
   currentJumpCount: 0
---- !u!114 &591304276758979955
+  playerCombat: {fileID: 0}
+--- !u!114 &7692772637322243757
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,21 +231,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 526478933161647253}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 440fb4b878962574cbb8e49b37054624, type: 3}
+  m_Script: {fileID: 11500000, guid: 53bbfba157d9f424d95d4edbefe36304, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hitMaterial: {fileID: 2100000, guid: 060299af0ead6d14892db364e510bbac, type: 2}
   flashDuration: 0.15
-  hitVFXColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
+  hitVFXColor: {r: 0.7372549, g: 0.7372549, b: 0.7372549, a: 0}
   hitVFX: {fileID: 7673702199922248069, guid: 61f42f760570fd64eb683c9278f99c62, type: 3}
   criticalHitVFX: {fileID: 4938385952536487480, guid: 13a23f00ebfb45d499b99e8b01033250, type: 3}
-  chillVFX: {r: 0.39811313, g: 0.7795417, b: 1, a: 1}
+  chillVFX: {r: 0.4, g: 0.78039217, b: 1, a: 1}
   burnVFX: {r: 1, g: 0, b: 0, a: 1}
   lightningVFX: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   burnIcon: {fileID: 7369807742456102226}
   chillIcon: {fileID: 895084664665817207}
   lightningIcon: {fileID: 8827375495449989020}
---- !u!114 &2566458416795803635
+--- !u!114 &73028276439291039
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -217,7 +254,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 526478933161647253}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 028c230485e31364fada11cd75b04501, type: 3}
+  m_Script: {fileID: 11500000, guid: d90dfff5935057a4ab29a4215e45cf23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lightningStrikeVFX: {fileID: 8533127427648567599, guid: e37c51dad3ac14a409b3e073a0cf4c68, type: 3}
+  currentCharge: 0
+  maximumCharge: 1
+--- !u!114 &5363652272897827656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526478933161647253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fcd515a6056c9040b2a90bcec33267e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   defaultStatSetup: {fileID: 11400000, guid: e587048a9ab09db4c9c842bbb3c3ab54, type: 2}
@@ -258,7 +310,7 @@ MonoBehaviour:
       baseValue: 1
       modifiers: []
     damage:
-      baseValue: 100
+      baseValue: 10
       modifiers: []
     criticalPower:
       baseValue: 0
@@ -270,13 +322,13 @@ MonoBehaviour:
       baseValue: 0
       modifiers: []
     fireDamage:
-      baseValue: 30
+      baseValue: 10
       modifiers: []
     iceDamage:
-      baseValue: 20
+      baseValue: 12
       modifiers: []
     lightningDamage:
-      baseValue: 10
+      baseValue: 14
       modifiers: []
   major:
     strength:
@@ -291,21 +343,6 @@ MonoBehaviour:
     vitality:
       baseValue: 0
       modifiers: []
---- !u!114 &73028276439291039
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 526478933161647253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d90dfff5935057a4ab29a4215e45cf23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lightningStrikeVFX: {fileID: 8533127427648567599, guid: e37c51dad3ac14a409b3e073a0cf4c68, type: 3}
-  currentCharge: 0
-  maximumCharge: 1
 --- !u!1 &3085625430160189891
 GameObject:
   m_ObjectHideFlags: 0
@@ -638,7 +675,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38c9feb1afbb13840ae3d5532173ad01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 981996577498196630}
   basicAttackScale:
     physical: 1
     elemental: 1

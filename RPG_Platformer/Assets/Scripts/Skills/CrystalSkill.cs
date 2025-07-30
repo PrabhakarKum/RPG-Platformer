@@ -32,7 +32,7 @@ public class CrystalSkill : Skill_Base
     
     protected override void Update()
     {
-        if (!Input.GetKeyDown(KeyCode.B)) return;
+        if (!Input.GetKeyDown(KeyCode.Alpha1)) return;
         if (Unlocked(SkillUpgradeType.Crystal_Teleport) && !OnCoolDown() )
         {
             HandleCrystalTeleport();

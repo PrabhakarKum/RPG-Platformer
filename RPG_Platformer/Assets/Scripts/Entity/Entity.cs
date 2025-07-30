@@ -39,6 +39,7 @@ public class Entity : MonoBehaviour
     private bool _facingRight = true;
 
     private Coroutine slowDownCoroutine;
+    public event Action OnTakingDamage;
     
     #region Components
     
@@ -108,7 +109,7 @@ public class Entity : MonoBehaviour
         PlayOnHitFeedback(target, element, isCritical);
         StartCoroutine(HitKnockBack(physicalDamageTaken,damageDealer));
         ReduceHp(physicalDamageTaken + elementalDamageTaken);
-        
+        OnTakingDamage?.Invoke();
         return true;
     }
 

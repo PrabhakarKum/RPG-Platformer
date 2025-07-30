@@ -54,7 +54,7 @@ public class SkeletonBattleState : EnemyState
     public override void Enter()
     {
         base.Enter();
-        player = PlayerManager.instance.player.transform;
+        player = PlayerManager.Instance.player.transform;
     }
 
     public override void Exit()

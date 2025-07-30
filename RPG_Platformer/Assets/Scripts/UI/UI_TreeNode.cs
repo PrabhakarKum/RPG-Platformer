@@ -50,8 +50,8 @@ public class UI_TreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void Refund()
     {
-        if(isUnlocked)
-            _skillTree.AddSkillPoints(skillData.cost);
+        if(isUnlocked == false || skillData.unlockedByDefault)
+            return;
         
         isUnlocked = false;
         isLocked = false;

@@ -2,19 +2,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Object_ItemPickup : MonoBehaviour
 {
-    private SpriteRenderer spriteRenderer;
+    [SerializeField] private Vector2 dropForce = new Vector2(1, 2);
     [SerializeField] private ItemDataSO itemData;
-
-    private Inventory_Item itemToAdd;
-    private Inventory_Base playerInventory;
-
-    private void Awake()
-    {
-        itemToAdd = new Inventory_Item(itemData);
-    }
+    
+    [Space]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Collider2D collider2D;
 
     private void OnValidate()
     {
@@ -22,19 +20,57 @@ public class Object_ItemPickup : MonoBehaviour
             return;
         
         spriteRenderer = GetComponent<SpriteRenderer>();
+        SetupVisuals();
+    }
+
+    public void SetupItems()
+    {
+        this.itemData = itemData;
+        SetupVisuals();
+
+        float xDropForce = Random.Range(-dropForce.x, dropForce.x);
+        rb.velocity = new Vector2(xDropForce, dropForce.y);
+        collider2D.isTrigger = false;
+    }
+
+    private void SetupVisuals()
+    {
         spriteRenderer.sprite = itemData.itemIcon;
         gameObject.name = "Object_ItemPickup - " + itemData.itemName;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground") && collider2D.isTrigger == false)
+        {
+            collider2D.isTrigger = true;
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-         playerInventory = collision.GetComponent<Inventory_Base>();
+        Inventory_Player inventoryPlayer = collision.GetComponent<Inventory_Player>();
 
-        if (playerInventory != null && playerInventory.CanAddItem())
+        if (inventoryPlayer == null)
+            return;
+        
+        Inventory_Item itemToAdd = new Inventory_Item(itemData);
+        Inventory_Storage storage = inventoryPlayer.storage;
+
+        if (itemData.itemType == ItemType.Material)
         {
-            playerInventory.AddItem(itemToAdd);
+            storage.AddMaterialToStash(itemToAdd);
             Destroy(gameObject);
+            return;
         }
-       
+
+        if (inventoryPlayer.CanAddItem(itemToAdd)) 
+        {
+             inventoryPlayer.AddItem(itemToAdd);
+             Destroy(gameObject); 
+        }
+         
+
     }
 }

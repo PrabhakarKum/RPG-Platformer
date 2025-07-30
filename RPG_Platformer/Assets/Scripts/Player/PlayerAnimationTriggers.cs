@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerAnimationTriggers : MonoBehaviour
@@ -7,6 +8,9 @@ public class PlayerAnimationTriggers : MonoBehaviour
     
     private Entity_Stats _stats;
     [SerializeField] private LayerMask whatIsEnemy;
+    
+    public event Action<float> OnDoingPhysicalDamage;
+    public event Action OnTargetHit;
 
     private void Awake()
     {
@@ -32,7 +36,13 @@ public class PlayerAnimationTriggers : MonoBehaviour
             var elementalDamage = attackData.elementalDamage;
             var element = attackData.element;
             
-            damageable?.TakeDamage(physicalDamage, elementalDamage, element,target.transform, _stats.transform, attackData.isCritical);
+            bool targetGotHit = damageable.TakeDamage(physicalDamage, elementalDamage, element,target.transform, _stats.transform, attackData.isCritical);
+
+            if (targetGotHit)
+            {
+                OnDoingPhysicalDamage?.Invoke(physicalDamage);
+                OnTargetHit?.Invoke();
+            }
             
             if (element != ElementType.None)
                 statusHandler?.ApplyStatusEffect(element, attackData.effectData);

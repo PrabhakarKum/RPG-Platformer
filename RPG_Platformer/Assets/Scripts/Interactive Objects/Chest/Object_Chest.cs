@@ -9,6 +9,7 @@ public class Object_Chest : MonoBehaviour, IDamageable
     [SerializeField] private Vector2 knockBack;
     public bool TakeDamage(float damage, float elementalDamage, ElementType elementType, Transform position, Transform damageDealer, bool isCritical)
     {
+        
         entityVFX.StartCoroutine(entityVFX.FlashFX());
         _animator.SetBool("chestOpen", true);
         _rigidbody.velocity = knockBack;

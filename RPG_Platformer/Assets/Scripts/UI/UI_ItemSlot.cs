@@ -6,29 +6,45 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_ItemSlot : MonoBehaviour, IPointerDownHandler
+public class UI_ItemSlot : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     protected Inventory_Item itemInSlot;
     protected Inventory_Player inventory;
+    protected UI_Manager uiManager;
+    protected RectTransform rectTransform;
     
     [Header("UiSlot Setup")] 
     [SerializeField] private Image itemIcon;
     [SerializeField] private TextMeshProUGUI itemStackSize;
 
+    protected virtual void Awake()
+    {
+        uiManager = GetComponentInParent<UI_Manager>();
+        rectTransform = GetComponent<RectTransform>();
+    }
+
     protected virtual void Start()
     {
-        inventory = Inventory_Base.Instance as Inventory_Player;
-        
-        if (inventory == null)
-            Debug.LogError("Could not find Inventory_Player instance");
+        inventory = Inventory_Player.Instance;
     }
 
     public virtual void OnPointerDown(PointerEventData eventData)
     {
-        if(itemInSlot == null)
+        if(itemInSlot == null || itemInSlot.itemData.itemType == ItemType.Material)
             return;
         
-        inventory.TryEquipItem(itemInSlot);
+        if (itemInSlot.itemData.itemType == ItemType.Consumable)
+        {
+            if(itemInSlot.itemEffect.CanBeUsed() == false)
+                return;
+            
+            inventory.TryUseItem(itemInSlot);
+        }
+        else
+            inventory.TryEquipItem(itemInSlot);
+        
+        if(itemInSlot == null)
+            uiManager.itemTooltip.ShowToolTip(false, null);
     }
     public void UpdateSlot(Inventory_Item item)
     {
@@ -47,7 +63,17 @@ public class UI_ItemSlot : MonoBehaviour, IPointerDownHandler
         itemStackSize.text = item.stackSize > 1 ? item.stackSize.ToString() : "";
 
     }
+    public virtual void OnPointerEnter(PointerEventData eventData)
+    {
+        if(itemInSlot == null)
+            return;
+        
+        uiManager.itemTooltip.ShowToolTip(true, rectTransform, itemInSlot);
+        
+    }
 
-
-    
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        uiManager.itemTooltip.ShowToolTip(false, null);
+    }
 }

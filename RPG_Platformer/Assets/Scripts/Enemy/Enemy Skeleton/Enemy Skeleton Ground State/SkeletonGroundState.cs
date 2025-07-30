@@ -33,7 +33,7 @@ public class SkeletonGroundState : EnemyState
     public override void Enter()
     {
         base.Enter();
-        _player = PlayerManager.instance.player.transform;
+        _player = PlayerManager.Instance.player.transform;
     }
 
     public override void Exit()

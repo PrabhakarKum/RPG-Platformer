@@ -7,5 +7,6 @@ public enum ItemType
     Material,
     Weapon,
     Armour,
-    Accessory // rings, amulets, books 
+    Accessory, // rings, amulets, books 
+    Consumable, // potions, food, buffs,etc.
 }

@@ -7,7 +7,8 @@ public class Player : Entity, IDamageable
 {
     public static event Action OnPlayerDeath;
 
-    [Header("Attack Details")] public bool hasSword = true;
+    [Header("Attack Details")] 
+    public bool hasSword = true;
     public Vector2[] attackMovement;
     public float counterAttackDuration = 0.2f;
     public bool isBusy { get; private set; }
@@ -15,9 +16,6 @@ public class Player : Entity, IDamageable
     [Header("Domain Expansion Details")] 
     public float riseSpeed = 10;
     public float riseMaxDistance = 0.5f;
-
-
-   
 
     [Header("Movement Info")] public float moveSpeed = 10f;
     public float swordReturnImpact = 1.5f;
@@ -32,10 +30,11 @@ public class Player : Entity, IDamageable
     public int currentJumpCount = 0;
     public bool CanJump() => currentJumpCount < maxJumps;
 
-  
-
     #region Components
 
+    public PlayerAnimationTriggers playerCombat;
+    public Player_Stats stats { get; private set; }
+    public Player_VFX playerVFX { get; private set; }
     public SkillManager skillManager { get; private set; }
     public UI_Manager uiManager { get; private set; }
     public Entity_StatusHandler statusHandler { get; private set; }
@@ -66,7 +65,10 @@ public class Player : Entity, IDamageable
     {
         base.Awake();
 
-        uiManager = FindAnyObjectByType<UI_Manager>();
+        uiManager = FindFirstObjectByType<UI_Manager>();
+        stats = GetComponent<Player_Stats>();
+        playerVFX = GetComponent<Player_VFX>();
+        playerCombat = GetComponentInChildren<PlayerAnimationTriggers>();
         statusHandler = GetComponent<Entity_StatusHandler>();
         playerStateMachine = new PlayerStateMachine();
         
@@ -103,10 +105,8 @@ public class Player : Entity, IDamageable
         CheckForDashInput();
         CheckForDomainExpansionInput();
         
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            OpenSkillTree();
-        }
+        if(Input.GetKeyDown(KeyCode.F))
+            TryInteract();
     }
 
     protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
@@ -172,7 +172,7 @@ public class Player : Entity, IDamageable
 
     private void CheckForDomainExpansionInput()
     {
-        if (Input.GetKeyDown(KeyCode.R) && SkillManager.Instance.domainExpansion.CanUseSkill())
+        if (Input.GetKeyDown(KeyCode.Alpha3) && SkillManager.Instance.domainExpansion.CanUseSkill())
         {
             if(isDead)
                 return;
@@ -208,11 +208,41 @@ public class Player : Entity, IDamageable
     {
         currentJumpCount = 0;
     }
+    
+    public void TeleportPlayer(Vector3 position) => transform.position = position;
 
-    private void OpenSkillTree()
-    { 
-        uiManager.ToggleSkillTreeUI();
+    private void TryInteract()
+    {
+        Transform closest = null;
+        var closestDistance = Mathf.Infinity;
+        var objectsAround = Physics2D.OverlapCircleAll(transform.position + new Vector3(-0.01f, 0 ,0), 0.056f);
+
+        foreach (var target in objectsAround)
+        {
+            var interactable = target.GetComponent<IInteractable>();
+            if(interactable == null) continue;
+            
+            var distance = Vector2.Distance(transform.position, target.transform.position);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closest = target.transform;
+            }
+        }
+        
+        if(closest == null)
+            return;
+        
+        closest.GetComponent<IInteractable>().Interact();
     }
 
-    public void TeleportPlayer(Vector3 position) => transform.position = position;
+    protected override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
+    
+        // Draw a wire disc at the object's position
+        Gizmos.DrawWireSphere(transform.position + new Vector3(-0.01f, 0 ,0), 0.056f);
+        
+    }
 }

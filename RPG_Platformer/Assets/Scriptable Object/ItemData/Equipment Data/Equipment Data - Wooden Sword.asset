@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69bf94db1a626204ea569cf212f8689b, type: 3}
+  m_Name: Equipment Data - Wooden Sword
+  m_EditorClassIdentifier: 
+  itemPrice: 100
+  minStackSizeAtShop: 1
+  maxStackSizeAtShop: 3
+  craftRecipe:
+  - itemData: {fileID: 11400000, guid: 45a0f383a75bbf94487265290df2c0d3, type: 2}
+    stackSize: 3
+    itemEffect: {fileID: 0}
+  - itemData: {fileID: 11400000, guid: e897bff91ae8bb340a0b7085a57fadf4, type: 2}
+    stackSize: 2
+    itemEffect: {fileID: 0}
+  itemName: Wooden Sword
+  itemIcon: {fileID: 1876633664, guid: d4745ecc11c66ed4d9d55b2a27e5fab2, type: 3}
+  itemType: 1
+  maxStackSize: 1
+  itemEffect: {fileID: 0}
+  modifiers:
+  - statType: 7
+    value: 4
+  - statType: 3
+    value: 2

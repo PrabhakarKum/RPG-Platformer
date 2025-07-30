@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public class Entity_Stats : MonoBehaviour
@@ -10,6 +12,10 @@ public class Entity_Stats : MonoBehaviour
    public Stat_OffenceGroup offence;
    public Stat_MajorGroup major;
 
+   protected virtual void Awake()
+   {
+      
+   }
 
    public AttackData GetAttackData(DamageScaleData scaleData)
    {
@@ -85,29 +91,24 @@ public class Entity_Stats : MonoBehaviour
 
    public float GetPhysicalDamage(out bool isCritical, float scaleFactor = 1f)
    {
-      var baseDamage = offence.damage.GetValue();
-      var bonusDamage = major.strength.GetValue();
-      var totalBaseDamage = baseDamage + bonusDamage;
-
-      var baseCriticalChance = offence.criticalChance.GetValue();
-      var bonusCriticalChance = major.agility.GetValue() * 0.3f; // Bonus Critical Chance from agility: +0.3% per AGI
-      var criticalChance = baseCriticalChance + bonusCriticalChance;
-
-      var baseCriticalPower = offence.criticalPower.GetValue();
-      var bonusCriticalPower = major.strength.GetValue() * 0.5f; // Bonus Critical Power from agility: +0.5% per Critical Power
-      var criticalPower = (baseCriticalPower + bonusCriticalPower)/ 100; // Total Critical Power as multiplier (e.g 110 / 100 = 1.1f - multiplier)
+      var baseDamage = GetBaseDamage();
+      var criticalChance = GetCriticalChance();
+      var criticalPower = GetCriticalPower()/ 100; // Total Critical Power as multiplier (e.g 110 / 100 = 1.1f - multiplier)
 
       isCritical = Random.Range(0, 100) < criticalChance;
-      var finalDamage= isCritical ? totalBaseDamage * criticalPower : totalBaseDamage;
+      var finalDamage= isCritical ? baseDamage * criticalPower : baseDamage;
 
       return finalDamage * scaleFactor;
    }
 
+   public float GetBaseDamage() => offence.damage.GetValue() + major.strength.GetValue(); // Bonus Damage from strength: +1 per STR
+   public float GetCriticalChance() => offence.criticalChance.GetValue() + (major.agility.GetValue() * 0.3f); // Bonus Critical Chance from agility: +0.3% per AGI
+   public float GetCriticalPower() => offence.criticalPower.GetValue() + (major.strength.GetValue() * 0.5f); // Bonus Critical Power from strength: +0.5% per STR
+
+
    public float GetArmourMitigation(float armourReduction)
    {
-      var baseArmour = defence.armour.GetValue();
-      var bonusArmour = major.vitality.GetValue(); // Bonus armour from Vitality : +1 per VIT
-      var totalArmour = baseArmour + bonusArmour;
+      var totalArmour = GetBaseArmour();
 
       var reductionMultiplier = Mathf.Clamp(1 - armourReduction, 0, 1);
       var effectiveArmour = totalArmour * reductionMultiplier;
@@ -119,6 +120,7 @@ public class Entity_Stats : MonoBehaviour
       return finalMitigation;
    }
 
+   public float GetBaseArmour() => defence.armour.GetValue() + major.vitality.GetValue();  // Bonus armour from Vitality : +1 per VIT
    public float GetArmourReduction()
    {
       // Total armour reduction as multiplier (e.g 30 / 100 = 0.3f - multiplier)
@@ -187,11 +189,11 @@ public class Entity_Stats : MonoBehaviour
             return defence.armour;
          case StatType.Evasion:
             return defence.evasion;
-         case StatType.FireResistant:
+         case StatType.FireResistance:
             return defence.fireResistant;
-         case StatType.IceResistant:
+         case StatType.IceResistance:
             return defence.iceResistant;
-         case StatType.LightningResistant:
+         case StatType.LightningResistance:
             return defence.lightningResistant;
 
          default:

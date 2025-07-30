@@ -22,6 +22,6 @@ public class UI_EquipSlot : UI_ItemSlot
         if(itemInSlot == null)
             return;
         
-        inventory.UnEquipItem(itemInSlot);
+        inventory.UnequipItem(itemInSlot);
     }
 }

@@ -15,6 +15,9 @@ MonoBehaviour:
   itemPrice: 100
   minStackSizeAtShop: 1
   maxStackSizeAtShop: 7
+  itemRarity: 200
+  dropChance: 80
+  maxDropChance: 80
   craftRecipe: []
   itemName: Wooden Log
   itemIcon: {fileID: 2033364245, guid: d4745ecc11c66ed4d9d55b2a27e5fab2, type: 3}

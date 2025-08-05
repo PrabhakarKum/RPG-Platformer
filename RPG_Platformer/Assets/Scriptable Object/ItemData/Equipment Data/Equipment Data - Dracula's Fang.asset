@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69bf94db1a626204ea569cf212f8689b, type: 3}
   m_Name: Equipment Data - Dracula's Fang
   m_EditorClassIdentifier: 
-  itemName: Dracula's Fang
-  itemIcon: {fileID: -555185358, guid: d4745ecc11c66ed4d9d55b2a27e5fab2, type: 3}
-  itemType: 1
-  maxStackSize: 1
-  itemEffect: {fileID: 11400000, guid: 75fa0fa08719e15408e700af87f49e70, type: 2}
+  itemPrice: 100
+  minStackSizeAtShop: 1
+  maxStackSizeAtShop: 1
+  itemRarity: 903
+  dropChance: 9.8
+  maxDropChance: 12.9
   craftRecipe:
   - itemData: {fileID: 11400000, guid: 17d42acf388970740ba55751887139e5, type: 2}
     stackSize: 1
@@ -24,6 +25,11 @@ MonoBehaviour:
   - itemData: {fileID: 11400000, guid: 08322c9a6dde855429ddb791aa2f1025, type: 2}
     stackSize: 1
     itemEffect: {fileID: 0}
+  itemName: Dracula's Fang
+  itemIcon: {fileID: -555185358, guid: d4745ecc11c66ed4d9d55b2a27e5fab2, type: 3}
+  itemType: 1
+  maxStackSize: 1
+  itemEffect: {fileID: 11400000, guid: 75fa0fa08719e15408e700af87f49e70, type: 2}
   modifiers:
   - statType: 3
     value: 2

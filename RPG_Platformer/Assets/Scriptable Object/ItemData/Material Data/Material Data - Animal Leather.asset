@@ -15,6 +15,9 @@ MonoBehaviour:
   itemPrice: 100
   minStackSizeAtShop: 1
   maxStackSizeAtShop: 10
+  itemRarity: 108
+  dropChance: 82.1
+  maxDropChance: 82.1
   craftRecipe: []
   itemName: Animal Leather
   itemIcon: {fileID: 438459453, guid: d4745ecc11c66ed4d9d55b2a27e5fab2, type: 3}

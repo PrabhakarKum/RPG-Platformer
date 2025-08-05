@@ -6,8 +6,8 @@ using Random = UnityEngine.Random;
 
 public class Object_ItemPickup : MonoBehaviour
 {
-    [SerializeField] private Vector2 dropForce = new Vector2(1, 2);
-    [SerializeField] private ItemDataSO itemData;
+    [SerializeField] private Vector2 dropForce = new Vector2(5, 10);
+    private ItemDataSO itemData;
     
     [Space]
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -23,7 +23,7 @@ public class Object_ItemPickup : MonoBehaviour
         SetupVisuals();
     }
 
-    public void SetupItems()
+    public void SetupItems(ItemDataSO itemData)
     {
         this.itemData = itemData;
         SetupVisuals();
@@ -43,6 +43,7 @@ public class Object_ItemPickup : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground") && collider2D.isTrigger == false)
         {
+            Debug.Log("touched the ground: "+ collision.gameObject.layer);
             collider2D.isTrigger = true;
             rb.constraints = RigidbodyConstraints2D.FreezeAll;
         }

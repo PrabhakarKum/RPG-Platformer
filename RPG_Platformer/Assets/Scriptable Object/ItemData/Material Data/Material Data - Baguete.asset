@@ -15,6 +15,9 @@ MonoBehaviour:
   itemPrice: 100
   minStackSizeAtShop: 1
   maxStackSizeAtShop: 5
+  itemRarity: 900
+  dropChance: 10.1
+  maxDropChance: 62
   craftRecipe: []
   itemName: Baguete
   itemIcon: {fileID: 714289321, guid: d4745ecc11c66ed4d9d55b2a27e5fab2, type: 3}

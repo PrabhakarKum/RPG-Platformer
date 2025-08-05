@@ -11,6 +11,7 @@ public class UI_ItemToolTip : UI_Tooltip
     [SerializeField] private TextMeshProUGUI itemDescription;
     [SerializeField] private TextMeshProUGUI itemPrice;
     [SerializeField] private Transform merchantInfo;
+    [SerializeField] private Transform inventoryInfo;
     
 
     public void ShowToolTip(bool show, RectTransform targetRect, Inventory_Item itemToShow, bool buyPrice = false, bool showMerchantInfo = false)
@@ -18,6 +19,8 @@ public class UI_ItemToolTip : UI_Tooltip
         base.ShowToolTip(show, targetRect);
         
         merchantInfo.gameObject.SetActive(showMerchantInfo);
+        inventoryInfo.gameObject.SetActive(!showMerchantInfo);
+        
         int price = buyPrice ? itemToShow.buyPrice : Mathf.FloorToInt(itemToShow.sellPrice);
         int totalPrice = price * itemToShow.stackSize;
 

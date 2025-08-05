@@ -49,6 +49,7 @@ public class Entity : MonoBehaviour
     public Animator animator {get; private set;}
     public Rigidbody2D rigidBody {get; private set;}
     public Entity_VFX entityVFX {get; private set;}
+    public Entity_DropManager dropManager {get; private set;}
     
     #endregion
 
@@ -61,6 +62,7 @@ public class Entity : MonoBehaviour
         _healthBar = GetComponentInChildren<Slider>();
         _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         entityStats = GetComponent<Entity_Stats>();
+        dropManager = GetComponent<Entity_DropManager>();
         
         SetupHealth();
         
@@ -170,6 +172,7 @@ public class Entity : MonoBehaviour
     {
         isDead = true;
         EntityDeath();
+        dropManager?.DropItems();
     }
 
     private IEnumerator HitKnockBack(float damage,Transform attacker)

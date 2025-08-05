@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 4093890090796128217}
   - component: {fileID: 3885176606102063364}
   - component: {fileID: 2855651359739053470}
+  - component: {fileID: 3369788126005769089}
   m_Layer: 8
   m_Name: Enemy_Skeleton
   m_TagString: Untagged
@@ -168,22 +169,21 @@ MonoBehaviour:
   attackCheckRadius: 0.3
   groundCheck: {fileID: 3535444424289669572}
   groundCheckDistance: 0.15
-  groundLayer:
+  whatIsGround:
     serializedVersion: 2
     m_Bits: 64
   wallCheck: {fileID: 8725128754235865416}
   wallCheckDistance: 0.3
-  currentHealth: 0
-  isDead: 0
   regenInterval: 1
   canRegenerateHealth: 1
+  currentHealth: 0
   facingDirection: 1
-  entityStats: {fileID: 0}
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 128
   isPlayerDead: 0
-  moveSpeed: 0.2
+  moveSpeed: 25
+  battleMoveSpeed: 35
   idleTime: 1
   attackDistance: 0.3
   attackCooldown: 0.2
@@ -267,7 +267,7 @@ MonoBehaviour:
       baseValue: 1
       modifiers: []
     damage:
-      baseValue: 15
+      baseValue: 50
       modifiers: []
     criticalPower:
       baseValue: 0
@@ -282,10 +282,10 @@ MonoBehaviour:
       baseValue: 0
       modifiers: []
     iceDamage:
-      baseValue: 10
+      baseValue: 0
       modifiers: []
     lightningDamage:
-      baseValue: 5
+      baseValue: 0
       modifiers: []
   major:
     strength:
@@ -315,6 +315,22 @@ MonoBehaviour:
   lightningStrikeVFX: {fileID: 8533127427648567599, guid: e37c51dad3ac14a409b3e073a0cf4c68, type: 3}
   currentCharge: 0
   maximumCharge: 1
+--- !u!114 &3369788126005769089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257681223758593534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93c830d2a9e011c44bd6c51ce83b1dae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemDropPrefab: {fileID: 721423231560212935, guid: fb9e1d31eb90bed47bb753a8725f08e7, type: 3}
+  dropData: {fileID: 11400000, guid: c19225c294e59a445a119114986994f4, type: 2}
+  maximumRarityAmount: 1200
+  maxItemsToDrop: 3
 --- !u!1 &1316535328637707486
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,8 +401,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1551058917
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ba62cb3bb381ac143be69f02a1aecbab, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -751,8 +767,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1551058917
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ae5d90d4898ff0641806dc9d63de0b81, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -835,8 +851,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1551058917
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 1c8ea9db8e1baac48b1dd35dc64cdb49, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -968,7 +984,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b4a4537b308bc4c8381c2fc82fb2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySkeleton: {fileID: 2941209766670758721}
   basicAttackScale:
     physical: 1
     elemental: 1
